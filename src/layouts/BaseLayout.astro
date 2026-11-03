@@ -8,6 +8,9 @@ interface Props {
 }
 
 const { title = '옆의 옆의 옆의 옆에', bodyClass = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const fontRegular = `${base}fonts/exhibition/seopung-Regular.otf`;
+const fontMedium = `${base}fonts/exhibition/seopung-Medium.otf`;
 ---
 
 <!doctype html>
@@ -17,6 +20,20 @@ const { title = '옆의 옆의 옆의 옆에', bodyClass = '' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="2026 한글꼴연구회 가을전 웹" />
     <title>{title}</title>
+    <style is:global set:html={`@font-face {
+  font-family: 'Seopung';
+  src: url('${fontRegular}') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Seopung';
+  src: url('${fontMedium}') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}`} />
     <script is:inline>
       (function () {
         var FRAME_W = 1277;

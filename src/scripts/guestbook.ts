@@ -1,4 +1,5 @@
 import { appendGuestbookEntry } from '../lib/guestbook-storage';
+import { isSitePath, normalizePathname, sitePath } from '../lib/site-path';
 
 const OPEN_CLASS = 'is-open';
 const IDLE_CLASS = 'guestbook-panel--idle';
@@ -60,7 +61,7 @@ function defaultFontId(): string {
   const specimen = document.querySelector<HTMLTextAreaElement>('[data-specimen-input]');
   if (specimen?.dataset.fontId) return specimen.dataset.fontId;
 
-  const match = window.location.pathname.match(/^\/fonts\/([^/]+)\/?$/);
+  const match = normalizePathname(window.location.pathname).match(/^\/fonts\/([^/]+)\/?$/);
   if (match?.[1]) return match[1];
 
   return 'seopung';
@@ -341,7 +342,7 @@ function initGuestbook() {
     );
   };
 
-  const isGuestbookListPage = () => /^\/guestbook\/?$/.test(window.location.pathname);
+  const isGuestbookListPage = () => isSitePath('guestbook');
 
   document.querySelectorAll('[data-guestbook-open]').forEach((trigger) => {
     trigger.addEventListener('click', (e) => {
@@ -371,7 +372,7 @@ function initGuestbook() {
 
       if (isGuestbookListPage()) {
         e.preventDefault();
-        window.location.assign('/main');
+        window.location.assign(sitePath('main'));
       }
     });
   });
@@ -444,7 +445,7 @@ function initGuestbook() {
     messageInput.value = '';
 
     animateClose(() => {
-      window.location.assign('/guestbook/');
+      window.location.assign(sitePath('guestbook/'));
     });
   });
 

@@ -8,6 +8,7 @@ const introLines =
 const participantLines =
   (exhibition as { participantLines?: string[] }).participantLines ??
   [exhibition.participants.join(' ')];
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title={`${exhibition.title} | 한글꼴 가을전`} bodyClass="page-landing">
@@ -31,7 +32,7 @@ const participantLines =
         <div class="landing-top">
           <div class="landing-canvas__header">
             <img
-              src="/assets/header_white.svg"
+              src={`${base}assets/header_white.svg`}
               alt="옆의 옆의 옆의 옆에"
               width="1157"
               height="200"
@@ -75,8 +76,8 @@ const participantLines =
             <dd class="landing-credits__value landing-credits__value--web">{exhibition.web}</dd>
           </dl>
           <div class="landing-logos">
-            <img src="/assets/AGTI.svg" alt="AGTI" class="landing-logos__agti" />
-            <img src="/assets/hangulggol_white.svg" alt="한글꼴연구회" class="landing-logos__hangul" />
+            <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-logos__agti" />
+            <img src={`${base}assets/hangulggol_white.svg`} alt="한글꼴연구회" class="landing-logos__hangul" />
           </div>
         </div>
       </div>

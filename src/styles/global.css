@@ -1,21 +1,5 @@
 @import './tokens.css';
 
-@font-face {
-  font-family: 'Seopung';
-  src: url('/fonts/exhibition/seopung-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Seopung';
-  src: url('/fonts/exhibition/seopung-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
 *,
 *::before,
 *::after {

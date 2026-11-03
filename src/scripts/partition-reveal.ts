@@ -1,4 +1,5 @@
 import { releaseLandingScrollLock } from './landing-fit';
+import { isSitePath, sitePath } from '../lib/site-path';
 
 const DURATION_MS = 900;
 const EASING = 'cubic-bezier(0.65, 0, 0.35, 1)';
@@ -244,8 +245,8 @@ async function openPartition(root: HTMLElement) {
     overlay.classList.remove('is-revealing');
     root.classList.add('is-open');
     main.setAttribute('aria-hidden', 'false');
-    if (window.location.pathname !== '/main') {
-      window.history.replaceState({}, '', '/main');
+    if (!isSitePath('main')) {
+      window.history.replaceState({}, '', sitePath('main'));
     }
     unlockPageScroll();
     return;
@@ -263,8 +264,8 @@ async function openPartition(root: HTMLElement) {
   main.setAttribute('aria-hidden', 'false');
   cleanupRevealInlineStyles(root, main);
 
-  if (window.location.pathname !== '/main') {
-    window.history.replaceState({}, '', '/main');
+  if (!isSitePath('main')) {
+    window.history.replaceState({}, '', sitePath('main'));
   }
   unlockPageScroll();
 }
@@ -273,7 +274,7 @@ function init() {
   const root = document.querySelector<HTMLElement>('[data-partition-root]');
   if (!root) return;
 
-  if (window.location.pathname === '/main') {
+  if (isSitePath('main')) {
     root.classList.add('is-open');
     root.querySelector('[data-partition-main]')?.setAttribute('aria-hidden', 'false');
     unlockPageScroll();
