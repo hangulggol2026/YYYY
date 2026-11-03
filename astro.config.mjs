@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
 
-// https://junseongshene.github.io/-26--------/
+// https://junseongshene.github.io/YYYY/
 export default defineConfig({
   output: 'static',
   site: 'https://junseongshene.github.io',
-  base: '/-26--------/',
+  base: '/YYYY/',
 });
