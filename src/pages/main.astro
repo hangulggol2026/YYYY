@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MainView from '../components/MainView.astro';
+import exhibition from '../../data/exhibition.json';
+---
+
+<BaseLayout title={`목록 | ${exhibition.title}`}>
+  <MainView />
+</BaseLayout>

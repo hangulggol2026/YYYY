@@ -1,0 +1,22 @@
+---
+interface Props {
+  class?: string;
+  /** Section background spans full viewport width */
+  bleed?: boolean;
+  dark?: boolean;
+  light?: boolean;
+}
+
+const { class: className = '', bleed = false, dark = false, light = false } = Astro.props;
+const bandClass = [bleed ? 'layout-band' : '', dark ? 'bg-dark' : '', light ? 'bg-light' : '', className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class={bandClass}>
+  <div class="layout-frame">
+    <div class="grid-8">
+      <slot />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+---
+interface Props {
+  variant: 'onDark' | 'onLight';
+}
+
+const { variant } = Astro.props;
+const src =
+  variant === 'onDark'
+    ? '/assets/header_white.svg'
+    : '/assets/header_black.svg';
+---
+
+<header class="site-header">
+  <img
+    src={src}
+    alt="옆의 옆의 옆의 옆에"
+    width={variant === 'onDark' ? 1157 : 887}
+    height={variant === 'onDark' ? 200 : 153}
+  />
+</header>

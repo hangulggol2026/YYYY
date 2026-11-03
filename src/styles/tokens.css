@@ -1,0 +1,129 @@
+:root {
+  /* Figma frame: iPhone 18 Pro artboard */
+  --frame-w: 1277;
+  --frame-h: 2776;
+
+  --layout-design-width: var(--frame-w);
+  --layout-margin-px: 60;
+  --layout-gutter-px: 20;
+  --layout-columns: 8;
+
+  /*
+   * Responsive scale from artboard (not raw 100vw everywhere).
+   * Phone: width scale + landing scroll; vf = --vf-w. Desktop: contain.
+   * --vb / --vbh: defaults from sv*; viewport-scale.ts overwrites from visualViewport when JS runs.
+   */
+  --vb: min(100svw, calc(var(--frame-w) * 1px));
+  --vbh: min(100svh, calc(var(--frame-h) * 1px));
+  --vf-w: calc(var(--vb) / var(--frame-w));
+  --vf-h: calc(var(--vbh) / var(--frame-h));
+  /* Default before JS; exhibition-fit overrides below */
+  --vf: min(var(--vf-w), var(--vf-h));
+  --vfh: var(--vf);
+
+  --layout-margin: calc(var(--layout-margin-px) * var(--vf));
+  --grid-gutter: calc(var(--layout-gutter-px) * var(--vf));
+  --layout-content-max: calc(1157 * var(--vf));
+
+  --color-bg-dark: #000000;
+  --color-bg-light: #ffffff;
+  --color-text-on-dark: #ffffff;
+  --color-text-on-light: #000000;
+  --color-divider: #d9d9d9;
+  --color-track: #cccccc;
+
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --font-specimen: 'Seopung', serif;
+
+  --specimen-size: calc(24 * var(--vf));
+  --specimen-letter-spacing: 0em;
+  --specimen-line-height: 1.85;
+
+  --guestbook-height: calc(172 * var(--vf));
+
+  --motion-partition: 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Landing frame 1:20 — Figma y/x (1277×2776) */
+  --landing-type-size: calc(52 * var(--vf));
+  --landing-partition-height: calc(8 * var(--vf));
+  --landing-label-col: calc(217 * var(--vf));
+  --landing-header-top: calc(49 * var(--vf));
+  --landing-header-art-w: calc(1221 * var(--vf));
+  --landing-header-art-h: calc(292 * var(--vf));
+  --landing-header-to-intro: calc(100 * var(--vf));
+  --landing-intro-to-partition: calc(45 * var(--vf));
+  --landing-partition-to-title: calc(146 * var(--vf));
+  --landing-title-to-credits: calc(68 * var(--vf));
+  --landing-gap-after-participants: calc(95 * var(--vf));
+  --landing-gap-after-collab: calc(111 * var(--vf));
+  --landing-gap-before-logos: calc(21 * var(--vf));
+  --landing-logo-gap: calc(37 * var(--vf));
+  --landing-logo-agti-h: calc(41 * var(--vf));
+  --landing-logo-hangul-h: calc(44 * var(--vf));
+
+  /* Main — Figma 1:25 Main frame */
+  --main-chrome-height: calc(345 * var(--vf));
+  --main-white-top: calc(345 * var(--vf));
+  --main-header-y: calc(72 * var(--vf));
+  --main-header-art-w: calc(1157 * var(--vf));
+  --main-header-art-h: calc(200 * var(--vf));
+  --main-header-to-list: calc(94 * var(--vfh));
+  /* Figma 1:25 — 첫 행(일과사분의일) 간격 = 섹션 기준 */
+  --main-row-section-gap: var(--main-header-to-list);
+  --main-meta-to-preview: calc(10 * var(--vfh));
+  --main-preview-min-height: calc(471 * var(--vfh) * 0.75);
+  --main-row-rule-gap: calc(41 * var(--vfh));
+  --main-meta-size: calc(47 * var(--vf));
+  --main-preview-size: calc(290 * var(--vf) * 0.75);
+  --main-marquee-duration: 28s;
+  --main-marquee-gap: calc(56 * var(--vf));
+  --main-guestbook-top: calc(2604 * var(--vfh));
+
+  /* Detail — reference/detail.png + artboard type scale */
+  --detail-hero-pad-top: calc(56 * var(--vfh));
+  --detail-hero-pad-bottom: calc(40 * var(--vfh));
+  --detail-title-size: calc(132 * var(--vf));
+  --detail-designer-size: calc(52 * var(--vf));
+  --detail-caption-size: calc(52 * var(--vf));
+  --detail-caption-gap: calc(32 * var(--vfh));
+  --detail-hero-title-lh: 1.05;
+  --detail-hero-ui-lh: 1.625;
+  --detail-controls-pad-y: calc(56 * var(--vfh));
+  --detail-slider-gap: calc(40 * var(--vfh));
+  --detail-slider-label-size: calc(36 * var(--vf));
+  --detail-slider-label-zone: calc(220 * var(--vf));
+  --detail-slider-track-height: calc(52 * var(--vf));
+  --detail-slider-thumb-w: 3px;
+  --detail-slider-thumb-h: calc(40 * var(--vf));
+  --detail-weight-radius: calc(12 * var(--vf));
+  --detail-specimen-min-h: calc(480 * var(--vfh));
+  --detail-specimen-default-size: calc(52 * var(--vf));
+
+  --guestbook-panel-section-gap: calc(60 * var(--vfh));
+  --guestbook-panel-pad-top: var(--guestbook-panel-section-gap);
+  --guestbook-panel-toolbar-gap: var(--guestbook-panel-section-gap);
+
+  --landing-scale: 1;
+}
+
+html[data-exhibition-fit='width'] {
+  --vf: var(--vf-w);
+  --vfh: var(--vf-w);
+}
+
+html[data-exhibition-fit='contain'] {
+  --vf: min(var(--vf-w), var(--vf-h));
+  --vfh: var(--vf);
+}
+
+@media (min-width: 1277px) {
+  :root {
+    --vb: calc(var(--frame-w) * 1px);
+  }
+}
+
+@media (min-height: 2776px) {
+  :root {
+    --vbh: calc(var(--frame-h) * 1px);
+  }
+}

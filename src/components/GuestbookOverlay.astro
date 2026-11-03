@@ -1,0 +1,86 @@
+---
+import fontsData from '../../data/fonts.json';
+
+const fonts = fontsData.fonts;
+const defaultFontId = fonts[fonts.length - 1]?.id ?? 'seopung';
+---
+
+<div
+  id="guestbook-panel"
+  class="guestbook-panel guestbook-panel--idle"
+  data-guestbook-panel
+  aria-hidden="true"
+>
+  <button
+    type="button"
+    class="guestbook-panel__header-hit"
+    data-guestbook-close-header
+    tabindex="-1"
+    aria-label="방명록 닫기"
+  ></button>
+
+  <div class="guestbook-panel__sheet" data-guestbook-sheet>
+    <form class="guestbook-panel__form" data-guestbook-form>
+      <div class="layout-frame guestbook-panel__frame">
+        <div class="grid-8 guestbook-panel__grid">
+          <div class="span-8 guestbook-panel__toolbar">
+            <div class="guestbook-font-picker" data-guestbook-font-picker>
+              <label class="guestbook-panel__select-label" id="guestbook-font-label">서체 선택</label>
+              <input type="hidden" name="fontId" value={defaultFontId} data-guestbook-font />
+              <button
+                type="button"
+                class="guestbook-font-picker__trigger"
+                data-guestbook-font-trigger
+                aria-labelledby="guestbook-font-label"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="guestbook-font-listbox"
+              >
+                <span data-guestbook-font-label-text>{fonts.find((f) => f.id === defaultFontId)?.name ?? '서풍'}</span>
+                <span class="guestbook-font-picker__chevron" aria-hidden="true"></span>
+              </button>
+              <ul
+                id="guestbook-font-listbox"
+                class="guestbook-font-picker__list"
+                role="listbox"
+                tabindex="-1"
+                aria-labelledby="guestbook-font-label"
+                hidden
+                data-guestbook-font-list
+              >
+                {fonts.map((font) => (
+                  <li
+                    class="guestbook-font-picker__option"
+                    role="option"
+                    data-font-id={font.id}
+                    aria-selected={font.id === defaultFontId ? 'true' : 'false'}
+                  >
+                    <button type="button" class="guestbook-font-picker__option-btn">
+                      {font.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <textarea
+            class="span-8 guestbook-panel__input"
+            name="message"
+            data-guestbook-message
+            rows="6"
+            placeholder="방명을 남겨 주세요."
+            required
+            maxlength="500"
+          />
+
+          <div class="span-8 guestbook-panel__submit-row">
+            <button type="submit" class="guestbook-panel__submit" aria-label="작성 완료">
+              <span class="guestbook-panel__submit-glyph" aria-hidden="true">👆</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

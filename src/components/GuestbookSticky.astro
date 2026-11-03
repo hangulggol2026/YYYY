@@ -1,0 +1,11 @@
+---
+import exhibition from '../../data/exhibition.json';
+
+const { label } = exhibition.guestbook;
+---
+
+<div class="guestbook-sticky">
+  <button type="button" class="guestbook-sticky__trigger" data-guestbook-open>
+    {label}
+  </button>
+</div>

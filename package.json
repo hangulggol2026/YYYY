@@ -1,0 +1,17 @@
+{
+  "name": "hangulggol-autumn-2026",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev --host --open",
+    "start": "npm run dev",
+    "open": "open http://localhost:4321/dev.html",
+    "open:main": "open http://localhost:4321/main",
+    "open:seopung": "open http://localhost:4321/fonts/seopung",
+    "build": "astro build",
+    "preview": "astro preview --host --open"
+  },
+  "dependencies": {
+    "astro": "^5.7.0"
+  }
+}

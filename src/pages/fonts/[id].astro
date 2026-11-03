@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GuestbookSticky from '../../components/GuestbookSticky.astro';
+import LayoutGrid from '../../components/LayoutGrid.astro';
+import fontsData from '../../../data/fonts.json';
+import exhibition from '../../../data/exhibition.json';
+
+export function getStaticPaths() {
+  return fontsData.fonts.map((font) => ({
+    params: { id: font.id },
+    props: { font },
+  }));
+}
+
+const { font } = Astro.props;
+const specimenDefault = exhibition.defaultSpecimenText;
+---
+
+<BaseLayout title={`${font.name} | ${exhibition.title}`} bodyClass="page-detail">
+  <div class="detail-page">
+  <LayoutGrid bleed dark class="detail-hero">
+    <a href="/main" class="detail-back span-8">목록으로</a>
+    <div class="span-8 detail-hero__headline">
+      <h1 class="detail-hero__title">{font.name}</h1>
+      <span class="detail-hero__designer">{font.designer}</span>
+      <p class="detail-hero__caption">{font.caption}</p>
+    </div>
+  </LayoutGrid>
+
+  <LayoutGrid light class="detail-controls">
+    <div class="span-8" data-specimen-controls>
+      <div class="typo-slider-row">
+        <span class="typo-slider-row__label" id="label-size">글자 크기</span>
+        <input
+          id="slider-size"
+          type="range"
+          min="8"
+          max="96"
+          value="52"
+          data-slider="size"
+          aria-labelledby="label-size"
+        />
+      </div>
+      <div class="typo-slider-row">
+        <span class="typo-slider-row__label" id="label-tracking">글자 사이</span>
+        <input
+          id="slider-tracking"
+          type="range"
+          min="-20"
+          max="20"
+          value="0"
+          data-slider="tracking"
+          aria-labelledby="label-tracking"
+        />
+      </div>
+      <div class="typo-slider-row">
+        <span class="typo-slider-row__label" id="label-leading">글줄 사이</span>
+        <input
+          id="slider-leading"
+          type="range"
+          min="130"
+          max="240"
+          value="185"
+          data-slider="leading"
+          aria-labelledby="label-leading"
+        />
+      </div>
+    </div>
+    {font.id === 'seopung' && (
+      <>
+        <button
+          type="button"
+          class="col-4 detail-weight-btn is-active"
+          data-specimen-weight="400"
+          aria-pressed="true"
+        >
+          Regular
+        </button>
+        <button
+          type="button"
+          class="col-4 detail-weight-btn"
+          data-specimen-weight="500"
+          aria-pressed="false"
+        >
+          Medium
+        </button>
+      </>
+    )}
+  </LayoutGrid>
+
+  <LayoutGrid light class="detail-specimen">
+    <div class="span-8 detail-specimen__surface" data-specimen-scope>
+      <textarea
+        class="specimen-text"
+        data-specimen-input
+        data-font-id={font.id}
+        rows="8"
+        autocomplete="off"
+        autocapitalize="sentences"
+        spellcheck="true"
+        aria-label="서체 견본 입력">{specimenDefault}</textarea
+      >
+    </div>
+  </LayoutGrid>
+  </div>
+
+  <GuestbookSticky />
+  <script src="../../scripts/specimen-controls.ts"></script>
+</BaseLayout>

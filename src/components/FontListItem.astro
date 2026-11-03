@@ -1,0 +1,34 @@
+---
+import type { FontEntry } from '../lib/types';
+
+interface Props {
+  font: FontEntry;
+  previewPhrase: string;
+}
+
+const { font, previewPhrase } = Astro.props;
+---
+
+<article class="font-list-item">
+  <a href={`/fonts/${font.id}`} class="font-list-item__link">
+    <p class="font-list-item__meta">
+      <span class="font-list-item__name">{font.name}</span><span class="sep" aria-hidden="true"> ☞ </span>{font.designer}
+    </p>
+    <div class="font-list-item__carousel" aria-label={previewPhrase}>
+      <div class="font-list-item__carousel-track">
+        <span class="font-list-item__preview specimen-text">{previewPhrase}</span>
+        <span class="font-list-item__preview specimen-text" aria-hidden="true">{previewPhrase}</span>
+      </div>
+    </div>
+  </a>
+  <hr class="font-list-item__rule" />
+</article>
+
+<style>
+  .font-list-item__link {
+    display: block;
+  }
+  .font-list-item__link:active {
+    opacity: 0.7;
+  }
+</style>

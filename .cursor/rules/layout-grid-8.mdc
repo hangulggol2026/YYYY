@@ -1,0 +1,29 @@
+---
+description: Figma 1277 artboard — fixed 8-column layout for all exhibition pages
+alwaysApply: true
+---
+
+# 8-column layout (fixed grid)
+
+This project uses a **fixed** layout grid aligned to Figma **1277×2776** (margin **60px**, gutter **20px**, **8 columns**).
+
+## Structure
+
+- Wrap page sections in `LayoutGrid` → `layout-frame` → `grid-8` (do not reimplement margins ad hoc).
+- Place content on the grid with `span-8` (full row) or `col-*` as needed.
+- Direct children of `grid-8` that span the content width must use `grid-column: 1 / -1` (e.g. `.font-list-item`, `.site-header`, `.guestbook-entry`).
+
+## Tokens
+
+- Horizontal inset: `var(--layout-margin)` via `.layout-frame` padding.
+- Content width: 1157px design (`--layout-content-max`).
+
+## Avoid
+
+- Centering blocks with `max-width` + `margin: auto` outside the grid when the rest of the site uses `LayoutGrid`.
+- Wrapping all list rows in an extra `div` inside `grid-8` — use `display: contents` on a data container if the DOM must stay script-friendly.
+
+## Guestbook
+
+- List page: same as main list (`LayoutGrid` + entries as `grid-8` children).
+- Write panel: `layout-frame` + `grid-8` inside the sheet; toolbar, textarea, submit each `span-8`.

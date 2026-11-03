@@ -1,0 +1,12 @@
+---
+import SiteHeader from './SiteHeader.astro';
+import LayoutGrid from './LayoutGrid.astro';
+---
+
+<LayoutGrid bleed dark class="main-header">
+  <SiteHeader variant="onDark" />
+</LayoutGrid>
+
+<LayoutGrid light class="main-list guestbook-list">
+  <div class="guestbook-entries" data-guestbook-entries aria-live="polite"></div>
+</LayoutGrid>

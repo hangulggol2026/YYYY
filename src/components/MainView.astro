@@ -1,0 +1,22 @@
+---
+import SiteHeader from './SiteHeader.astro';
+import FontListItem from './FontListItem.astro';
+import GuestbookSticky from './GuestbookSticky.astro';
+import LayoutGrid from './LayoutGrid.astro';
+import fontsData from '../../data/fonts.json';
+import exhibition from '../../data/exhibition.json';
+---
+
+<LayoutGrid bleed dark class="main-header">
+  <SiteHeader variant="onDark" />
+</LayoutGrid>
+
+<LayoutGrid light class="main-list">
+  {
+      fontsData.fonts.map((font) => (
+        <FontListItem font={font} previewPhrase={exhibition.previewPhrase} />
+      ))
+  }
+</LayoutGrid>
+
+<GuestbookSticky />

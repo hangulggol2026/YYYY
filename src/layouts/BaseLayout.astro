@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+import GuestbookOverlay from '../components/GuestbookOverlay.astro';
+
+interface Props {
+  title?: string;
+  bodyClass?: string;
+}
+
+const { title = '옆의 옆의 옆의 옆에', bodyClass = '' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="2026 한글꼴연구회 가을전 웹" />
+    <title>{title}</title>
+    <script is:inline>
+      (function () {
+        var FRAME_W = 1277;
+        var FRAME_H = 2776;
+        var vv = window.visualViewport;
+        var w = vv ? vv.width : window.innerWidth;
+        var h = vv ? vv.height : window.innerHeight;
+        var top = vv ? vv.offsetTop : 0;
+        var left = vv ? vv.offsetLeft : 0;
+        var scaleW = w / FRAME_W;
+        var scaleH = h / FRAME_H;
+        var landingScale = w <= FRAME_W ? scaleW : Math.min(scaleW, scaleH);
+        var root = document.documentElement;
+        root.style.setProperty('--vb', Math.min(w, FRAME_W) + 'px');
+        root.style.setProperty('--vbh', Math.min(h, FRAME_H) + 'px');
+        root.style.setProperty('--landing-scale', String(landingScale));
+        root.style.setProperty('--vv-width', w + 'px');
+        root.style.setProperty('--vv-height', h + 'px');
+        root.style.setProperty('--vv-top', top + 'px');
+        root.style.setProperty('--vv-left', left + 'px');
+        root.dataset.landingFit = w <= FRAME_W ? 'width-scroll' : 'contain';
+        root.dataset.exhibitionFit = w <= FRAME_W ? 'width' : 'contain';
+      })();
+    </script>
+  </head>
+  <body class={bodyClass}>
+    <slot />
+    <GuestbookOverlay />
+    <script src="../scripts/viewport-scale.ts"></script>
+    <script src="../scripts/guestbook.ts"></script>
+    <script src="../scripts/grid-debug.ts"></script>
+  </body>
+</html>
