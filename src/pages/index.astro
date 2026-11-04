@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MainView from '../components/MainView.astro';
+import LandingDesktop from '../components/LandingDesktop.astro';
 import exhibition from '../../data/exhibition.json';
 
 const introLines =
@@ -19,7 +20,9 @@ const base = import.meta.env.BASE_URL;
       </div>
     </div>
 
-    <div class="landing-viewport" data-landing-viewport>
+    <LandingDesktop base={base} />
+
+    <div class="landing-viewport landing-viewport--mobile" data-landing-viewport>
       <div class="landing-canvas-scaler">
       <div
         class="landing-canvas bg-dark"

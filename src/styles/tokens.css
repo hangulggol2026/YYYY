@@ -88,6 +88,9 @@
   --detail-caption-gap: calc(32 * var(--vfh));
   --detail-hero-title-lh: 1.05;
   --detail-hero-ui-lh: 1.625;
+  --detail-back-chevron: calc(30 * var(--vf));
+  --detail-back-top: calc(32 * var(--vfh));
+  --detail-back-stroke: calc(5.5 * var(--vf));
   --detail-controls-pad-y: calc(56 * var(--vfh));
   --detail-slider-gap: calc(40 * var(--vfh));
   --detail-slider-label-size: calc(36 * var(--vf));
@@ -102,6 +105,8 @@
   --guestbook-panel-section-gap: calc(60 * var(--vfh));
   --guestbook-panel-pad-top: var(--guestbook-panel-section-gap);
   --guestbook-panel-toolbar-gap: var(--guestbook-panel-section-gap);
+  /* Submit ☞ inset from sheet bottom (+ env(safe-area on form) */
+  --guestbook-submit-bottom: calc(64 * var(--vfh));
 
   --landing-scale: 1;
 }

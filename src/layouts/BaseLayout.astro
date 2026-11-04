@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import GuestbookOverlay from '../components/GuestbookOverlay.astro';
+import { exhibitionFontFaceCss } from '../lib/exhibition-fonts';
 
 interface Props {
   title?: string;
@@ -9,8 +10,6 @@ interface Props {
 
 const { title = '옆의 옆의 옆의 옆에', bodyClass = '' } = Astro.props;
 const base = import.meta.env.BASE_URL;
-const fontRegular = `${base}fonts/exhibition/seopung-Regular.otf`;
-const fontMedium = `${base}fonts/exhibition/seopung-Medium.otf`;
 ---
 
 <!doctype html>
@@ -20,20 +19,7 @@ const fontMedium = `${base}fonts/exhibition/seopung-Medium.otf`;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="2026 한글꼴연구회 가을전 웹" />
     <title>{title}</title>
-    <style is:global set:html={`@font-face {
-  font-family: 'Seopung';
-  src: url('${fontRegular}') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Seopung';
-  src: url('${fontMedium}') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}`} />
+    <style is:global set:html={exhibitionFontFaceCss(base)} />
     <script is:inline>
       (function () {
         var FRAME_W = 1277;
@@ -56,6 +42,7 @@ const fontMedium = `${base}fonts/exhibition/seopung-Medium.otf`;
         root.style.setProperty('--vv-left', left + 'px');
         root.dataset.landingFit = w <= FRAME_W ? 'width-scroll' : 'contain';
         root.dataset.exhibitionFit = w <= FRAME_W ? 'width' : 'contain';
+        root.dataset.viewport = w >= 1280 ? 'web' : 'mobile';
       })();
     </script>
   </head>
@@ -63,6 +50,7 @@ const fontMedium = `${base}fonts/exhibition/seopung-Medium.otf`;
     <slot />
     <GuestbookOverlay />
     <script src="../scripts/viewport-scale.ts"></script>
+    <script src="../scripts/desktop-nav.ts"></script>
     <script src="../scripts/guestbook.ts"></script>
     <script src="../scripts/grid-debug.ts"></script>
   </body>

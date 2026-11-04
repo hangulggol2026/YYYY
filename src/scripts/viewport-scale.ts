@@ -40,6 +40,7 @@ export function applyViewportScale(root: HTMLElement, w: number, h: number, offs
   root.style.setProperty('--vv-height', `${h}px`);
   root.dataset.landingFit = landingFitMode(w);
   root.dataset.exhibitionFit = exhibitionFitMode(w);
+  root.dataset.viewport = w >= 1280 ? 'web' : 'mobile';
 }
 
 export function syncViewportScale() {

@@ -17,14 +17,18 @@ const specimenDefault = exhibition.defaultSpecimenText;
 const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={`${font.name} | ${exhibition.title}`} bodyClass="page-detail">
+<BaseLayout title={`${font.name} | ${exhibition.title}`} bodyClass={`page-detail page-font-${font.id}`}>
   <div class="detail-page">
   <LayoutGrid bleed dark class="detail-hero">
-    <a href={`${base}main`} class="detail-back span-8">목록으로</a>
-    <div class="span-8 detail-hero__headline">
-      <h1 class="detail-hero__title">{font.name}</h1>
-      <span class="detail-hero__designer">{font.designer}</span>
-      <p class="detail-hero__caption">{font.caption}</p>
+    <div class="span-8 detail-hero__top">
+      <a href={`${base}main`} class="detail-back" aria-label="목록으로">
+        <span class="detail-back__chevron" aria-hidden="true"></span>
+      </a>
+      <div class="detail-hero__headline">
+        <h1 class="detail-hero__title">{font.name}</h1>
+        <span class="detail-hero__designer">{font.designer}</span>
+        <p class="detail-hero__caption">{font.caption}</p>
+      </div>
     </div>
   </LayoutGrid>
 
@@ -95,6 +99,7 @@ const base = import.meta.env.BASE_URL;
         class="specimen-text"
         data-specimen-input
         data-font-id={font.id}
+        data-font-name={font.name}
         rows="8"
         autocomplete="off"
         autocapitalize="sentences"

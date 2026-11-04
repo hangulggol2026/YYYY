@@ -10,7 +10,7 @@ const { font, previewPhrase } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
-<article class="font-list-item">
+<article class="font-list-item" data-font-id={font.id}>
   <a href={`${base}fonts/${font.id}`} class="font-list-item__link">
     <p class="font-list-item__meta">
       <span class="font-list-item__name">{font.name}</span><span class="sep" aria-hidden="true"> ☞ </span>{font.designer}

@@ -1,0 +1,77 @@
+---
+import exhibition from '../../data/exhibition.json';
+
+interface Props {
+  base: string;
+}
+
+const { base } = Astro.props;
+const introParagraphs = exhibition.introParagraphs;
+const participantLines =
+  (exhibition as { participantLines?: string[] }).participantLines ??
+  [exhibition.participants.join(' ')];
+---
+
+<section class="landing-desktop" aria-label="전시 소개">
+  <div class="landing-desktop__inner">
+    <header class="landing-desktop__mast">
+      <img
+        class="landing-desktop__wordmark"
+        src={`${base}assets/header_white.svg`}
+        alt="옆의 옆의 옆의 옆에"
+        width="887"
+        height="153"
+        decoding="async"
+      />
+      <p class="landing-desktop__tag">2026 한글꼴연구회 가을전</p>
+    </header>
+
+    <div class="landing-desktop__grid">
+      <div class="landing-desktop__prose">
+        {
+          introParagraphs.map((para) => (
+            <p class="landing-desktop__para">{para}</p>
+          ))
+        }
+      </div>
+
+      <aside class="landing-desktop__aside">
+        <dl class="landing-desktop__meta">
+          <div class="landing-desktop__meta-row">
+            <dt>참여</dt>
+            <dd>
+              {participantLines.map((line) => (
+                <span class="landing-desktop__meta-line">{line}</span>
+              ))}
+            </dd>
+          </div>
+          <div class="landing-desktop__meta-row">
+            <dt>협업</dt>
+            <dd>{exhibition.collaboration}</dd>
+          </div>
+          <div class="landing-desktop__meta-row">
+            <dt>웹</dt>
+            <dd>{exhibition.web}</dd>
+          </div>
+        </dl>
+
+        <div class="landing-desktop__logos">
+          <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-desktop__logo-agti" />
+          <img
+            src={`${base}assets/hangulggol_white.svg`}
+            alt="한글꼴연구회"
+            class="landing-desktop__logo-hangul"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="landing-desktop__enter"
+          data-desktop-enter
+        >
+          전시 목록으로
+        </button>
+      </aside>
+    </div>
+  </div>
+</section>

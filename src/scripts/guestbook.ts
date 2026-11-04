@@ -1,4 +1,5 @@
 import { appendGuestbookEntry } from '../lib/guestbook-storage';
+import { exhibitionFontFamily } from '../lib/exhibition-fonts';
 import { isSitePath, normalizePathname, sitePath } from '../lib/site-path';
 
 const OPEN_CLASS = 'is-open';
@@ -13,6 +14,20 @@ const SWIPE_RATIO = 1.2;
 const BODY_HEADER_STATIC_CLASS = 'guestbook-open--header-static';
 const SCROLL_TOP_PX = 8;
 const MOTION_MS = 900;
+const DEFAULT_GUESTBOOK_PLACEHOLDER = '방명을 남겨 주세요.';
+
+/** e.g. 서풍 → 서풍으로 / 놀이 → 놀이로 */
+function guestbookPlaceholderForFont(fontName: string): string {
+  const trimmed = fontName.trim();
+  if (!trimmed) return DEFAULT_GUESTBOOK_PLACEHOLDER;
+  const code = trimmed.charCodeAt(trimmed.length - 1);
+  if (code >= 0xac00 && code <= 0xd7a3) {
+    const jong = (code - 0xac00) % 28;
+    const josa = jong === 0 || jong === 8 ? '로' : '으로';
+    return `${trimmed}${josa} 방명을 남겨보세요.`;
+  }
+  return `${trimmed}으로 방명을 남겨보세요.`;
+}
 
 function motionDurationMs(): number {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : MOTION_MS;
@@ -46,6 +61,7 @@ function measurePanelTop(pinnedHeader: HTMLElement | null): number {
     if (document.body.classList.contains('page-detail')) {
       return Math.max(0, pinnedHeader.getBoundingClientRect().bottom);
     }
+    /* Stable while header slides in (transform does not affect offsetHeight) */
     return pinnedHeader.offsetHeight;
   }
 
@@ -105,6 +121,33 @@ function initGuestbook() {
   let lockedScrollY = 0;
   let lockedSpecimenScrollTop = 0;
   const specimenInput = document.querySelector<HTMLTextAreaElement>('[data-specimen-input]');
+
+  const fontNameForPlaceholder = (): string => {
+    if (isDetailPage()) {
+      return (
+        specimenInput?.dataset.fontName?.trim() ||
+        document.querySelector<HTMLElement>('.detail-hero__title')?.textContent?.trim() ||
+        ''
+      );
+    }
+    return fontLabelText.textContent?.trim() ?? '';
+  };
+
+  const syncMessagePlaceholder = () => {
+    const name = fontNameForPlaceholder();
+    messageInput.placeholder = name
+      ? guestbookPlaceholderForFont(name)
+      : DEFAULT_GUESTBOOK_PLACEHOLDER;
+  };
+
+  const applyGuestbookMessageFont = (fontId: string) => {
+    const family = exhibitionFontFamily(fontId);
+    if (family) {
+      messageInput.style.setProperty('font-family', family);
+    } else {
+      messageInput.style.removeProperty('font-family');
+    }
+  };
 
   const isDetailPage = () => document.body.classList.contains('page-detail');
 
@@ -224,15 +267,19 @@ function initGuestbook() {
       const selected = option.dataset.fontId === fontId;
       option.setAttribute('aria-selected', selected ? 'true' : 'false');
     });
+    applyGuestbookMessageFont(fontId);
+    syncMessagePlaceholder();
   };
 
   const openFontPicker = () => {
+    if (isDetailPage()) return;
     fontPicker.classList.add(PICKER_OPEN_CLASS);
     fontTrigger.setAttribute('aria-expanded', 'true');
     fontList.hidden = false;
   };
 
   const toggleFontPicker = () => {
+    if (isDetailPage()) return;
     if (fontPicker.classList.contains(PICKER_OPEN_CLASS)) closeFontPicker();
     else openFontPicker();
   };
@@ -307,6 +354,7 @@ function initGuestbook() {
       id;
     setFontId(id, label);
     closeFontPicker();
+    syncMessagePlaceholder();
     syncPanelTop();
     syncHeaderEnterY(openHeaderMotion);
 
@@ -363,6 +411,7 @@ function initGuestbook() {
     headerEl.addEventListener('click', (e) => {
       if (!(e.target instanceof Element)) return;
       if (!headerEl.contains(e.target)) return;
+      if (e.target.closest('.detail-back')) return;
 
       if (panel.classList.contains(OPEN_CLASS) && !isClosing) {
         e.preventDefault();
