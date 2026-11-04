@@ -2,13 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MainView from '../components/MainView.astro';
 import LandingDesktop from '../components/LandingDesktop.astro';
+import LandingCredits from '../components/LandingCredits.astro';
 import exhibition from '../../data/exhibition.json';
 
 const introLines =
   (exhibition as { introLines?: string[] }).introLines ?? exhibition.introParagraphs;
-const participantLines =
-  (exhibition as { participantLines?: string[] }).participantLines ??
-  [exhibition.participants.join(' ')];
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -52,6 +50,7 @@ const base = import.meta.env.BASE_URL;
               ))
             }
           </div>
+          <div class="landing-partition-gap" data-landing-partition-gap aria-hidden="true"></div>
         </div>
 
         <div class="landing-canvas__partition" data-landing-partition>
@@ -63,25 +62,12 @@ const base = import.meta.env.BASE_URL;
         </div>
 
         <div class="landing-bottom">
-          <p class="landing-credits__title">{exhibition.creditsTitle}</p>
-          <dl class="landing-credits__list">
-            <dt class="landing-credits__label landing-credits__label--participants">참여</dt>
-            {
-              participantLines.map((line, index) => (
-                <dd class={`landing-credits__value landing-credits__participants-line landing-credits__participants-line--${index + 1}`}>
-                  {line}
-                </dd>
-              ))
-            }
-            <dt class="landing-credits__label landing-credits__label--collab">협업</dt>
-            <dd class="landing-credits__value landing-credits__value--collab">{exhibition.collaboration}</dd>
-            <dt class="landing-credits__label landing-credits__label--web">웹</dt>
-            <dd class="landing-credits__value landing-credits__value--web">{exhibition.web}</dd>
-          </dl>
-          <div class="landing-logos">
-            <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-logos__agti" />
-            <img src={`${base}assets/hangulggol_white.svg`} alt="한글꼴연구회" class="landing-logos__hangul" />
-          </div>
+          <div
+            class="landing-partition-gap landing-partition-gap--mirror"
+            data-landing-partition-gap-mirror
+            aria-hidden="true"
+          ></div>
+          <LandingCredits base={base} />
         </div>
       </div>
       </div>

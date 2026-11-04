@@ -10,6 +10,9 @@ const introParagraphs = exhibition.introParagraphs;
 const participantLines =
   (exhibition as { participantLines?: string[] }).participantLines ??
   [exhibition.participants.join(' ')];
+const scheduleLines =
+  (exhibition as { eventScheduleLines?: string[] }).eventScheduleLines ?? [];
+const eventVenue = (exhibition as { eventVenue?: string }).eventVenue ?? '';
 ---
 
 <section class="landing-desktop" aria-label="전시 소개">
@@ -37,6 +40,24 @@ const participantLines =
 
       <aside class="landing-desktop__aside">
         <dl class="landing-desktop__meta">
+          {
+            scheduleLines.length > 0 && (
+              <div class="landing-desktop__meta-row">
+                <dt>일시</dt>
+                <dd>
+                  {scheduleLines.map((line) => (
+                    <span class="landing-desktop__meta-line">{line}</span>
+                  ))}
+                </dd>
+              </div>
+            )
+          }
+          {eventVenue && (
+            <div class="landing-desktop__meta-row">
+              <dt>장소</dt>
+              <dd>{eventVenue}</dd>
+            </div>
+          )}
           <div class="landing-desktop__meta-row">
             <dt>참여</dt>
             <dd>
@@ -49,20 +70,21 @@ const participantLines =
             <dt>협업</dt>
             <dd>{exhibition.collaboration}</dd>
           </div>
-          <div class="landing-desktop__meta-row">
+          <div class="landing-desktop__meta-row landing-desktop__meta-row--web">
             <dt>웹</dt>
-            <dd>{exhibition.web}</dd>
+            <dd class="landing-desktop__web-row">
+              <span>{exhibition.web}</span>
+              <span class="landing-desktop__logos landing-desktop__logos--inline">
+                <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-desktop__logo-agti" />
+                <img
+                  src={`${base}assets/hangulggol_white.svg`}
+                  alt="한글꼴연구회"
+                  class="landing-desktop__logo-hangul"
+                />
+              </span>
+            </dd>
           </div>
         </dl>
-
-        <div class="landing-desktop__logos">
-          <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-desktop__logo-agti" />
-          <img
-            src={`${base}assets/hangulggol_white.svg`}
-            alt="한글꼴연구회"
-            class="landing-desktop__logo-hangul"
-          />
-        </div>
 
         <button
           type="button"

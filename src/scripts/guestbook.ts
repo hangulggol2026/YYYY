@@ -1,6 +1,7 @@
 import { appendGuestbookEntry } from '../lib/guestbook-storage';
 import { exhibitionFontFamily } from '../lib/exhibition-fonts';
 import { isSitePath, normalizePathname, sitePath } from '../lib/site-path';
+import { syncViewportScale } from './viewport-scale';
 
 const OPEN_CLASS = 'is-open';
 const IDLE_CLASS = 'guestbook-panel--idle';
@@ -222,6 +223,31 @@ function initGuestbook() {
     );
   };
 
+  const syncGuestbookViewport = () => {
+    syncViewportScale();
+    if (!panel.classList.contains(OPEN_CLASS)) return;
+    syncPanelTop();
+    syncHeaderEnterY(openHeaderMotion);
+  };
+
+  const scrollMessageInputIntoView = () => {
+    requestAnimationFrame(() => {
+      const vv = window.visualViewport;
+      if (vv && document.documentElement.dataset.viewport !== 'web') {
+        const rect = messageInput.getBoundingClientRect();
+        const vvBottom = vv.offsetTop + vv.height;
+        const padding = 12;
+        if (rect.bottom > vvBottom - padding) {
+          sheet.scrollTop += rect.bottom - (vvBottom - padding);
+        }
+        if (rect.top < vv.offsetTop + padding) {
+          sheet.scrollTop -= vv.offsetTop + padding - rect.top;
+        }
+      }
+      messageInput.scrollTop = messageInput.scrollHeight;
+    });
+  };
+
   const syncHeaderEnterY = (forMotion: boolean) => {
     if (!pinnedHeader) return;
     if (!forMotion) {
@@ -364,7 +390,7 @@ function initGuestbook() {
     if (ms === 0) {
       pinnedHeader?.classList.add(HEADER_MOTION_CLASS, HEADER_SETTLED_CLASS);
       panel.classList.add(OPEN_CLASS);
-      syncPanelTop();
+      syncGuestbookViewport();
       restoreSpecimenScroll();
       return;
     }
@@ -377,7 +403,7 @@ function initGuestbook() {
     }
 
     panel.classList.add(OPEN_CLASS);
-    syncPanelTop();
+    syncGuestbookViewport();
     restoreSpecimenScroll();
   };
 
@@ -429,6 +455,11 @@ function initGuestbook() {
   fontTrigger.addEventListener('click', (e) => {
     e.preventDefault();
     toggleFontPicker();
+  });
+
+  messageInput.addEventListener('focus', () => {
+    syncGuestbookViewport();
+    scrollMessageInputIntoView();
   });
 
   fontList.querySelectorAll<HTMLButtonElement>('.guestbook-font-picker__option-btn').forEach((btn) => {
@@ -516,17 +547,15 @@ function initGuestbook() {
   });
 
   window.addEventListener('resize', () => {
-    if (panel.classList.contains(OPEN_CLASS)) {
-      syncPanelTop();
-      syncHeaderEnterY(openHeaderMotion);
-    }
+    syncGuestbookViewport();
   });
 
   window.visualViewport?.addEventListener('resize', () => {
-    if (panel.classList.contains(OPEN_CLASS)) {
-      syncPanelTop();
-      syncHeaderEnterY(openHeaderMotion);
-    }
+    syncGuestbookViewport();
+  });
+
+  window.visualViewport?.addEventListener('scroll', () => {
+    syncGuestbookViewport();
   });
 }
 

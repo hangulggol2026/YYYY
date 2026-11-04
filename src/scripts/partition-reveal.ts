@@ -1,20 +1,23 @@
-import { releaseLandingScrollLock } from './landing-fit';
+import { releaseLandingScrollLock, syncLandingCanvasHeight } from './landing-fit';
 import { isSitePath, sitePath } from '../lib/site-path';
+import {
+  FRAME_H,
+  FRAME_W,
+  LANDING_HEADER_Y,
+  LANDING_PARTITION_H,
+  LANDING_PARTITION_Y,
+  MAIN_GUESTBOOK_TOP,
+  MAIN_HEADER_Y,
+  MAIN_WHITE_TOP,
+  PARTITION_W,
+  PARTITION_X,
+} from '../lib/design-frame';
 
 const DURATION_MS = 900;
 const EASING = 'cubic-bezier(0.65, 0, 0.35, 1)';
 
-/** Figma 1:20 landing + 1:25 main — design px on 1277×2776 */
-const FRAME_H = 2776;
-const LANDING_HEADER_Y = 113;
-const MAIN_HEADER_Y = 72;
-const PARTITION_Y = 1658;
-const PARTITION_H = 8;
-const PARTITION_X = 58;
-const PARTITION_W = 1157;
-const FRAME_W = 1277;
-const MAIN_WHITE_TOP = 345;
-const MAIN_GUESTBOOK_TOP = 2604;
+const PARTITION_Y = LANDING_PARTITION_Y;
+const PARTITION_H = LANDING_PARTITION_H;
 
 function readLandingScale(): number {
   const raw = getComputedStyle(document.documentElement).getPropertyValue('--landing-scale').trim();
@@ -232,6 +235,12 @@ async function openPartition(root: HTMLElement) {
   if (!overlay || !main) return;
 
   if (!liftPanels(root, overlay)) return;
+
+  syncLandingCanvasHeight();
+  const landingBottomEl = overlay.querySelector<HTMLElement>('.landing-bottom');
+  if (landingBottomEl) {
+    root.style.setProperty('--reveal-landing-bottom-h', `${landingBottomEl.offsetHeight}px`);
+  }
 
   const canvasRect = overlay.getBoundingClientRect();
   root.style.setProperty('--reveal-canvas-top', `${canvasRect.top}px`);

@@ -30,7 +30,16 @@ const base = import.meta.env.BASE_URL;
       </a>
       <div class="detail-hero__headline">
         <h1 class="detail-hero__title">{font.name}</h1>
-        <span class="detail-hero__designer">{font.designer}</span>
+        <span class="detail-hero__byline">
+          <span class="detail-hero__designer">{font.designer}</span>{' '}<a
+            class="detail-hero__instagram"
+            href={`https://www.instagram.com/${font.instagram}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @{font.instagram}
+          </a>
+        </span>
         <p class="detail-hero__caption">{font.caption}</p>
       </div>
     </div>

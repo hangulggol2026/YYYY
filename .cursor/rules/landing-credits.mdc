@@ -1,0 +1,33 @@
+---
+description: Landing lower credits (mobile canvas) spacing and web+logos row
+alwaysApply: false
+globs: **/LandingCredits.astro,**/index.astro,**/LandingDesktop.astro,**/global.css,**/landing-fit.ts,**/tokens.css,**/design-frame.ts
+---
+
+# Landing credits (하단 크레딧)
+
+Reference device: **iPhone 16** (393×852 logical px). Figma artboard **1277×2776** scales to viewport via `--landing-scale` (= `--vf-w` on phone).
+
+Inside `.landing-canvas`, use **`--ld` (design px)** tokens from `tokens.css` — not raw `px` or `--vf` (canvas transform already scales to device).
+
+Label inset **60** (`--landing-margin-x`), value column **217+903**.
+
+## Partition gap (symmetric)
+
+Above partition: `.landing-top` flex — `.landing-partition-gap` **flex-grows** (min `--landing-partition-min-gap`).
+
+Below partition: mirror gap height from `syncLandingPartitionGaps()` → `--landing-partition-gap-sync`.
+
+Do **not** use fixed `padding-top` on `.landing-credits__title` for partition spacing.
+
+## Other vertical rhythm (design units × `--ld`)
+
+| Measure | Figma |
+|---------|-------|
+| Line top → next section line top | **146** (`--landing-credits-section-gap`) |
+| Spacer after a line box | gap − line-height (`--landing-credits-section-break`) — title padding-bottom, section-break |
+| Canvas bottom inset | 146 |
+
+## Web + logos
+
+`--landing-web-logos-x` (673), `--landing-web-logos-top` (21), `--landing-web-logo-gap` (37).

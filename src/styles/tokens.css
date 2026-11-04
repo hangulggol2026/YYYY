@@ -1,5 +1,9 @@
 :root {
-  /* Figma frame: iPhone 18 Pro artboard */
+  /* Reference device: iPhone 16 portrait (393×852 logical CSS px) */
+  --device-ref-w: 393;
+  --device-ref-h: 852;
+
+  /* Figma mobile artboard — scales to viewport width (--landing-scale ≈ vb / frame-w) */
   --frame-w: 1277;
   --frame-h: 2776;
 
@@ -11,6 +15,7 @@
   /*
    * Responsive scale from artboard (not raw 100vw everywhere).
    * Phone: width scale + landing scroll; vf = --vf-w. Desktop: contain.
+   * At iPhone 16 width, --vf-w ≈ 393/1277 (matches --landing-scale on landing canvas).
    * --vb / --vbh: defaults from sv*; viewport-scale.ts overwrites from visualViewport when JS runs.
    */
   --vb: min(100svw, calc(var(--frame-w) * 1px));
@@ -20,6 +25,9 @@
   /* Default before JS; exhibition-fit overrides below */
   --vf: min(var(--vf-w), var(--vf-h));
   --vfh: var(--vf);
+
+  /* Landing canvas interior length (design px; whole canvas scaled by --landing-scale on phone) */
+  --ld: 1px;
 
   --layout-margin: calc(var(--layout-margin-px) * var(--vf));
   --grid-gutter: calc(var(--layout-gutter-px) * var(--vf));
@@ -43,23 +51,50 @@
 
   --motion-partition: 0.9s cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Landing frame 1:20 — Figma y/x (1277×2776) */
-  --landing-type-size: calc(52 * var(--vf));
-  --landing-partition-height: calc(8 * var(--vf));
-  --landing-label-col: calc(217 * var(--vf));
-  --landing-header-top: calc(49 * var(--vf));
-  --landing-header-art-w: calc(1221 * var(--vf));
-  --landing-header-art-h: calc(292 * var(--vf));
-  --landing-header-to-intro: calc(100 * var(--vf));
-  --landing-intro-to-partition: calc(45 * var(--vf));
-  --landing-partition-to-title: calc(146 * var(--vf));
-  --landing-title-to-credits: calc(68 * var(--vf));
-  --landing-gap-after-participants: calc(95 * var(--vf));
-  --landing-gap-after-collab: calc(111 * var(--vf));
-  --landing-gap-before-logos: calc(21 * var(--vf));
-  --landing-logo-gap: calc(37 * var(--vf));
-  --landing-logo-agti-h: calc(41 * var(--vf));
-  --landing-logo-hangul-h: calc(44 * var(--vf));
+  /* Landing frame 1:20 — Figma y/x on 1277×2776 (use --ld inside .landing-canvas) */
+  --landing-frame-w: calc(var(--frame-w) * var(--ld));
+  --landing-frame-h: calc(var(--frame-h) * var(--ld));
+  --landing-content-w: calc(1157 * var(--ld));
+  --landing-margin-x: calc(var(--layout-margin-px) * var(--ld));
+  --landing-padding-top: calc(113 * var(--ld));
+  --landing-top-h: calc(1658 * var(--ld));
+  --landing-partition-x: calc(58 * var(--ld));
+  --landing-partition-y: calc(1658 * var(--ld));
+  --landing-bottom-top: calc(1666 * var(--ld));
+  --landing-bottom-min-h: calc(1110 * var(--ld));
+  --landing-header-block-h: calc(200 * var(--ld));
+  --landing-intro-margin-top: calc(128 * var(--ld));
+  --landing-credits-pad-right: calc(97 * var(--ld));
+  --landing-label-col-w: calc(217 * var(--ld));
+  --landing-value-col-w: calc(903 * var(--ld));
+  --landing-main-guestbook-y: calc(2604 * var(--ld));
+  --landing-guestbook-h: calc(172 * var(--ld));
+
+  --landing-type-size: calc(52 * var(--ld));
+  --landing-partition-height: calc(8 * var(--ld));
+  --landing-label-col: var(--landing-label-col-w);
+  --landing-header-top: calc(49 * var(--ld));
+  --landing-header-art-w: calc(1221 * var(--ld));
+  --landing-header-art-h: calc(292 * var(--ld));
+  --landing-header-to-intro: calc(100 * var(--ld));
+  --landing-intro-to-partition: calc(45 * var(--ld));
+  --landing-partition-min-gap: calc(45 * var(--ld));
+  --landing-partition-to-title: var(--landing-partition-min-gap);
+  --landing-title-to-first-section: var(--landing-credits-section-gap);
+  --landing-title-to-credits: var(--landing-credits-section-gap);
+  --landing-credits-section-gap: calc(146 * var(--ld));
+  --landing-credits-bottom-inset: calc(146 * var(--ld));
+  --landing-web-logos-x: calc(673 * var(--ld));
+  --landing-web-logos-top: calc(21 * var(--ld));
+  --landing-web-logo-gap: calc(37 * var(--ld));
+  --landing-credit-line-h: calc(var(--landing-type-size) * 1.625);
+  --landing-credits-section-break: calc(var(--landing-credits-section-gap) - var(--landing-credit-line-h));
+  --landing-gap-after-participants: calc(95 * var(--ld));
+  --landing-gap-after-collab: calc(111 * var(--ld));
+  --landing-gap-before-logos: calc(21 * var(--ld));
+  --landing-logo-gap: calc(37 * var(--ld));
+  --landing-logo-agti-h: calc(41 * var(--ld));
+  --landing-logo-hangul-h: calc(44 * var(--ld));
 
   /* Main — Figma 1:25 Main frame */
   --main-chrome-height: calc(345 * var(--vf));
@@ -83,7 +118,7 @@
   --detail-hero-pad-top: calc(56 * var(--vfh));
   --detail-hero-pad-bottom: calc(40 * var(--vfh));
   --detail-title-size: calc(132 * var(--vf));
-  --detail-designer-size: calc(52 * var(--vf));
+  --detail-designer-size: calc(44 * var(--vf));
   --detail-caption-size: calc(52 * var(--vf));
   --detail-caption-gap: calc(32 * var(--vfh));
   --detail-hero-title-lh: 1.05;

@@ -1,0 +1,74 @@
+---
+import exhibition from '../../data/exhibition.json';
+
+interface Props {
+  base: string;
+}
+
+const { base } = Astro.props;
+
+const participantLines =
+  (exhibition as { participantLines?: string[] }).participantLines ??
+  [exhibition.participants.join(' ')];
+const scheduleLines =
+  (exhibition as { eventScheduleLines?: string[] }).eventScheduleLines ?? [];
+const eventVenue = (exhibition as { eventVenue?: string }).eventVenue ?? '';
+---
+
+<div class="landing-credits">
+  <p class="landing-credits__title">{exhibition.creditsTitle}</p>
+
+  <div class="landing-credits__grid">
+    {
+      scheduleLines.length > 0 && (
+        <>
+          <dl class="landing-credits__section">
+            <dt class="landing-credits__label">일시</dt>
+            <dd class="landing-credits__value">{scheduleLines[0]}</dd>
+            {scheduleLines[1] && <dd class="landing-credits__value">{scheduleLines[1]}</dd>}
+          </dl>
+          <div class="landing-credits__section-break" aria-hidden="true"></div>
+        </>
+      )
+    }
+
+    {
+      eventVenue && (
+        <>
+          <dl class="landing-credits__section">
+            <dt class="landing-credits__label">장소</dt>
+            <dd class="landing-credits__value">{eventVenue}</dd>
+          </dl>
+          <div class="landing-credits__section-break" aria-hidden="true"></div>
+        </>
+      )
+    }
+
+    <dl class="landing-credits__section">
+      <dt class="landing-credits__label">참여</dt>
+      {participantLines.map((line) => <dd class="landing-credits__value">{line}</dd>)}
+    </dl>
+    <div class="landing-credits__section-break" aria-hidden="true"></div>
+
+    <dl class="landing-credits__section">
+      <dt class="landing-credits__label">협업</dt>
+      <dd class="landing-credits__value">{exhibition.collaboration}</dd>
+    </dl>
+    <div class="landing-credits__section-break" aria-hidden="true"></div>
+
+    <dl class="landing-credits__section">
+      <dt class="landing-credits__label">웹</dt>
+      <dd class="landing-credits__value landing-credits__web-row">
+        <span class="landing-credits__web-name">{exhibition.web}</span>
+        <span class="landing-credits__logos">
+          <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-credits__logo-agti" />
+          <img
+            src={`${base}assets/hangulggol_white.svg`}
+            alt="한글꼴연구회"
+            class="landing-credits__logo-hangul"
+          />
+        </span>
+      </dd>
+    </dl>
+  </div>
+</div>

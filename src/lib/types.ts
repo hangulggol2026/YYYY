@@ -2,6 +2,7 @@ export interface FontEntry {
   id: string;
   name: string;
   designer: string;
+  instagram: string;
   caption: string;
 }
 

@@ -1,6 +1,7 @@
+import { DEVICE_REF_W, FRAME_H, FRAME_W } from '../lib/design-frame';
+
 /** Sync --vb / --vbh / visualViewport vars; --vf comes from CSS (length), not unitless JS. */
-export const FRAME_W = 1277;
-export const FRAME_H = 2776;
+export { DEVICE_REF_W, FRAME_H, FRAME_W };
 
 export function readViewportSize() {
   const vv = window.visualViewport;
