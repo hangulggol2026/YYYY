@@ -120,6 +120,10 @@
   line-height: 1.75;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.88);
+  word-break: keep-all;
+  hyphens: none;
+  line-break: strict;
+  overflow-wrap: normal;
 }
 
 [data-viewport='web'] .landing-desktop__aside {
@@ -158,6 +162,10 @@
   font-size: 15px;
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.82);
+  word-break: keep-all;
+  hyphens: none;
+  line-break: strict;
+  overflow-wrap: normal;
 }
 
 [data-viewport='web'] .landing-desktop__meta-line {
