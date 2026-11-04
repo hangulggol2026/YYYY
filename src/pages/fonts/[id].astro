@@ -17,7 +17,11 @@ const specimenDefault = exhibition.defaultSpecimenText;
 const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={`${font.name} | ${exhibition.title}`} bodyClass={`page-detail page-font-${font.id}`}>
+<BaseLayout
+  title={`${font.name} | ${exhibition.title}`}
+  description={`${font.name} — ${font.designer}. ${font.caption}`}
+  bodyClass={`page-detail page-font-${font.id}`}
+>
   <div class="detail-page">
   <LayoutGrid bleed dark class="detail-hero">
     <div class="span-8 detail-hero__top">

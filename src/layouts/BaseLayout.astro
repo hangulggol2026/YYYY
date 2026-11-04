@@ -1,14 +1,20 @@
 ---
 import '../styles/global.css';
 import GuestbookOverlay from '../components/GuestbookOverlay.astro';
+import SiteMeta from '../components/SiteMeta.astro';
 import { exhibitionFontFaceCss } from '../lib/exhibition-fonts';
 
 interface Props {
   title?: string;
   bodyClass?: string;
+  description?: string;
 }
 
-const { title = '옆의 옆의 옆의 옆에', bodyClass = '' } = Astro.props;
+const {
+  title = '옆의 옆의 옆의 옆에',
+  bodyClass = '',
+  description,
+} = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -17,7 +23,7 @@ const base = import.meta.env.BASE_URL;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="2026 한글꼴연구회 가을전 웹" />
+    <SiteMeta title={title} description={description} />
     <title>{title}</title>
     <style is:global set:html={exhibitionFontFaceCss(base)} />
     <script is:inline>
