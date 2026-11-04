@@ -490,12 +490,20 @@ function initGuestbook() {
     const text = messageInput.value.trim();
     if (!text) return;
 
-    appendGuestbookEntry({ fontId, text });
-    messageInput.value = '';
+    const submitBtn = form.querySelector<HTMLButtonElement>('.guestbook-panel__submit');
+    submitBtn?.setAttribute('disabled', 'true');
 
-    animateClose(() => {
-      window.location.assign(sitePath('guestbook/'));
-    });
+    void appendGuestbookEntry({ fontId, text })
+      .then(() => {
+        messageInput.value = '';
+        animateClose(() => {
+          window.location.assign(sitePath('guestbook/'));
+        });
+      })
+      .catch(() => {
+        submitBtn?.removeAttribute('disabled');
+        window.alert('방명을 저장하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.');
+      });
   });
 
   window.addEventListener('keydown', (e) => {

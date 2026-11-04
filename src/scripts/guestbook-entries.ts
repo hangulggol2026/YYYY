@@ -1,10 +1,9 @@
 import { readGuestbookEntries } from '../lib/guestbook-storage';
 
-function renderEntries() {
+function renderEntries(entries: Awaited<ReturnType<typeof readGuestbookEntries>>) {
   const root = document.querySelector('[data-guestbook-entries]');
   if (!root) return;
 
-  const entries = readGuestbookEntries().sort((a, b) => b.createdAt - a.createdAt);
   root.replaceChildren();
 
   if (entries.length === 0) {
@@ -46,8 +45,30 @@ function renderEntries() {
   });
 }
 
-renderEntries();
+function showLoadError() {
+  const root = document.querySelector('[data-guestbook-entries]');
+  if (!root) return;
+  root.replaceChildren();
+  const err = document.createElement('p');
+  err.className = 'guestbook-entries__empty';
+  err.textContent = '방명록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.';
+  root.append(err);
+}
+
+async function loadEntries() {
+  const root = document.querySelector('[data-guestbook-entries]');
+  if (!root) return;
+
+  try {
+    const entries = await readGuestbookEntries();
+    renderEntries(entries);
+  } catch {
+    showLoadError();
+  }
+}
+
+void loadEntries();
 
 window.addEventListener('pageshow', (event) => {
-  if (event.persisted) renderEntries();
+  if (event.persisted) void loadEntries();
 });

@@ -33,3 +33,8 @@ npm run preview
 ## 배포
 
 GitHub Pages용 `base`는 `astro.config.mjs`에서 저장소 이름에 맞게 수정하세요.
+
+### 방명록 (전 visitors 공유)
+
+Supabase 설정이 필요합니다. 로컬 `.env`와 GitHub Actions Secrets에 `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`를 넣으세요. 자세한 절차는 [supabase/README.md](./supabase/README.md)를 참고하세요.
+
