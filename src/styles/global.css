@@ -178,6 +178,21 @@ html[data-debug-grid] .layout-frame {
   line-height: var(--specimen-line-height);
 }
 
+/* Hide exhibition type until woff2 faces are ready (no system-font flash). */
+html:not(.fonts-ready) .specimen-text,
+html:not(.fonts-ready) .detail-hero__title,
+html:not(.fonts-ready) .font-list-item__preview,
+html:not(.fonts-ready) .guestbook-panel__input {
+  color: transparent !important;
+  caret-color: transparent;
+}
+
+html.fonts-ready .specimen-text,
+html.fonts-ready .detail-hero__title,
+html.fonts-ready .font-list-item__preview {
+  transition: color 0.15s ease;
+}
+
 /* Landing — Figma 1277×2776 canvas; phone = width scale + vertical scroll */
 .partition-stage {
   position: relative;
@@ -1088,14 +1103,7 @@ body.page-detail .guestbook-panel__toolbar {
   border: 0;
 }
 
-body.page-detail.page-font-seonyu {
-  --font-specimen: 'Seonyu', serif;
-}
-
-.font-list-item[data-font-id='seonyu'] .font-list-item__preview,
-.guestbook-entry[data-font-id='seonyu'] .font-list-item__preview {
-  font-family: 'Seonyu', serif;
-}
+/* Exhibition specimen families: injected via exhibitionFontFaceCss() in BaseLayout */
 
 .guestbook-panel__input {
   flex: 1 1 auto;
@@ -1219,6 +1227,11 @@ html:has(body.page-detail.guestbook-open) {
   line-height: var(--detail-hero-ui-lh);
   font-weight: 400;
   white-space: normal;
+}
+
+/* 하품: 타이틀 옆 디자이너 이름만 공백 한 칸 정도 우측으로 */
+body.page-font-yawp .detail-hero__byline {
+  margin-left: calc(20 * var(--vf) + 0.25em);
 }
 
 .detail-hero__designer {
@@ -1468,6 +1481,7 @@ body.page-detail.specimen-editing .guestbook-sticky {
   padding: 0;
   font-family: var(--font-specimen);
   font-size: var(--specimen-size);
+  font-weight: var(--specimen-font-weight, 400);
   letter-spacing: var(--specimen-letter-spacing);
   line-height: var(--specimen-line-height);
   color: inherit;

@@ -41,7 +41,7 @@
   --color-track: #cccccc;
 
   --font-ui: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
-  --font-specimen: 'Seopung', serif;
+  --font-specimen: 'Seopung', 'ExhibitionBlank';
 
   --specimen-size: calc(24 * var(--vf));
   --specimen-letter-spacing: 0em;

@@ -9,7 +9,8 @@
     "open:main": "open http://localhost:4321/main",
     "open:seopung": "open http://localhost:4321/fonts/seopung",
     "build": "astro build",
-    "preview": "astro preview --host --open"
+    "preview": "astro preview --host --open",
+    "fonts:woff2": ".venv-fonts/bin/python -c \"import cffsubr\" 2>/dev/null || .venv-fonts/bin/pip install -q cffsubr; .venv-fonts/bin/python scripts/convert-fonts-woff2.py"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
