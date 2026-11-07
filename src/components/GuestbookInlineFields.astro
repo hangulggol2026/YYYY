@@ -6,13 +6,13 @@ interface Props {
 }
 
 const { guestbookLabel } = Astro.props;
+const base = import.meta.env.BASE_URL;
 const fonts = fontsData.fonts;
 ---
 
 <form class="main-desktop-guestbook__form" data-guestbook-form>
   <div class="main-desktop-guestbook__picker guestbook-font-picker" data-guestbook-font-picker>
     <input type="hidden" name="fontId" value="" data-guestbook-font />
-    <span class="visually-hidden" data-guestbook-font-label-text></span>
     <button
       type="button"
       class="main-desktop-guestbook__trigger guestbook-font-picker__trigger"
@@ -21,8 +21,25 @@ const fonts = fontsData.fonts;
       aria-expanded="false"
       aria-controls="guestbook-font-listbox-desktop"
     >
-      <span class="main-desktop-guestbook__trigger-label">{guestbookLabel}</span>
-      <span class="guestbook-font-picker__chevron main-desktop-guestbook__chevron" aria-hidden="true"></span>
+      <span
+        class="main-desktop-guestbook__trigger-label"
+        data-guestbook-font-label-text
+        data-guestbook-trigger-default={guestbookLabel}
+      >
+        {guestbookLabel}
+      </span>
+      <span class="guestbook-font-picker__chevron main-desktop-guestbook__chevron" aria-hidden="true">
+        <svg
+          class="main-desktop-guestbook__chevron-svg"
+          width="16"
+          height="8"
+          viewBox="0 0 16 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M0 1.25 8 6.75 16 1.25" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </span>
     </button>
     <ul
       id="guestbook-font-listbox-desktop"
@@ -49,15 +66,26 @@ const fonts = fontsData.fonts;
     </ul>
   </div>
 
-  <textarea
-    class="main-desktop-guestbook__input"
-    name="message"
-    data-guestbook-message
-    rows="6"
-    placeholder="글꼴을 선택하고 방명을 남겨주세요."
-    required
-    maxlength="500"
-  />
-
-  <button type="submit" class="visually-hidden">작성 완료</button>
+  <div class="main-desktop-guestbook__input-wrap">
+    <textarea
+      class="main-desktop-guestbook__input"
+      name="message"
+      data-guestbook-message
+      rows="6"
+      placeholder="글꼴을 선택하고 방명을 남겨주세요."
+      required
+      maxlength="500"
+      disabled
+      aria-disabled="true"
+    ></textarea>
+    <button type="submit" class="main-desktop-guestbook__submit" aria-label="방명 보내기" disabled>
+      <img
+        src={`${base}assets/pingerbutton.svg`}
+        alt=""
+        width="53"
+        height="22"
+        decoding="async"
+      />
+    </button>
+  </div>
 </form>

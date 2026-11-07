@@ -19,6 +19,14 @@ const EXHIBITION_BLANK_WEIGHTS = [400, 500] as const;
  */
 export const EXHIBITION_GLYPHS_SCALE: Partial<Record<string, number>> = {
   byeokjomok: 0.5,
+  popcorn: 0.88,
+  ulmeok: 0.92,
+};
+
+/** 방명록 서체 드롭다운·트리거 — 잉크가 작게 보이는 face만 미세 확대 (1 = 동일). */
+export const EXHIBITION_GUESTBOOK_UI_GLYPHS_SCALE: Partial<Record<string, number>> = {
+  haetsal: 1.14,
+  jamjari: 1.12,
 };
 
 /**
@@ -50,6 +58,10 @@ export const EXHIBITION_DETAIL_CAPTION_GAP_DELTA: Partial<Record<string, string>
 
 export function exhibitionGlyphsScale(fontId: string): number {
   return EXHIBITION_GLYPHS_SCALE[fontId] ?? 1;
+}
+
+export function exhibitionGuestbookUiGlyphsScale(fontId: string): number {
+  return EXHIBITION_GUESTBOOK_UI_GLYPHS_SCALE[fontId] ?? 1;
 }
 
 export function exhibitionDetailTitleComp(fontId: string): ExhibitionDetailTitleComp | null {
@@ -135,12 +147,32 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
 .guestbook-entry[data-font-id='${id}'] .font-list-item__preview {
   font-family: ${family};
 }`);
+    apply.push(
+      `.guestbook-font-picker__option[data-font-id='${id}'] .guestbook-font-picker__option-btn,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option[data-font-id='${id}'] .guestbook-font-picker__option-btn {
+  font-family: ${family};
+}`,
+    );
 
     const glyphScale = exhibitionGlyphsScale(id);
     if (glyphScale !== 1) {
       apply.push(`.font-list-item:not(.guestbook-entry)[data-font-id='${id}'] {
   --exhibition-glyphs-scale: ${glyphScale};
 }`);
+    }
+
+    const guestbookUiScale = exhibitionGuestbookUiGlyphsScale(id);
+    if (guestbookUiScale !== 1) {
+      apply.push(
+        `.guestbook-font-picker__option[data-font-id='${id}'] .guestbook-font-picker__option-btn,
+.guestbook-font-picker[data-selected-font='${id}'] [data-guestbook-font-label-text] {
+  font-size: calc(54 * var(--vf) * ${guestbookUiScale});
+}`,
+        `[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option[data-font-id='${id}'] .guestbook-font-picker__option-btn,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker[data-selected-font='${id}'] .main-desktop-guestbook__trigger-label {
+  font-size: calc(var(--dl-ui-type) * ${guestbookUiScale});
+}`,
+      );
     }
 
     const titleComp = exhibitionDetailTitleComp(id);

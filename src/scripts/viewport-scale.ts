@@ -27,6 +27,16 @@ export function computeLandingScale(w: number, h: number): number {
   return Math.min(w / FRAME_W, h / FRAME_H);
 }
 
+/** Desktop landing + main — uniform contain; scales down/up with viewport (resize sync). */
+export function computeDesktopCanvasScale(w: number, h: number, profile: string): number {
+  if (profile !== 'web') return 1;
+  return Math.min(w / DESKTOP_LANDING_W, h / DESKTOP_LANDING_H);
+}
+
+export function computeDesktopMainScale(w: number, h: number, profile: string): number {
+  return computeDesktopCanvasScale(w, h, profile);
+}
+
 export function landingFitMode(w: number): 'width-scroll' | 'contain' {
   return w <= FRAME_W ? 'width-scroll' : 'contain';
 }
@@ -53,9 +63,9 @@ export function applyViewportScale(root: HTMLElement, w: number, h: number, offs
   root.dataset.exhibitionFit = exhibitionFitMode(w);
   root.dataset.viewport = profile;
 
-  const desktopLandingScale =
-    profile === 'web' ? Math.min(w / DESKTOP_LANDING_W, h / DESKTOP_LANDING_H) : 1;
-  root.style.setProperty('--desktop-landing-scale', String(desktopLandingScale));
+  const desktopCanvasScale = computeDesktopCanvasScale(w, h, profile);
+  root.style.setProperty('--desktop-landing-scale', String(desktopCanvasScale));
+  root.style.setProperty('--desktop-main-scale', String(desktopCanvasScale));
 }
 
 export function syncViewportScale() {

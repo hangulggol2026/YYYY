@@ -59,7 +59,9 @@ const base = import.meta.env.BASE_URL;
         root.dataset.exhibitionFit = w <= FRAME_W ? 'width' : 'contain';
         root.dataset.viewport = isDesktopLayout ? 'web' : 'mobile';
         var dlScale = isDesktopLayout ? Math.min(w / DL_W, h / DL_H) : 1;
+        var dlMainScale = dlScale;
         root.style.setProperty('--desktop-landing-scale', String(dlScale));
+        root.style.setProperty('--desktop-main-scale', String(dlMainScale));
       })();
     </script>
   </head>

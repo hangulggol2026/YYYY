@@ -1,6 +1,6 @@
 import { releaseLandingScrollLock, syncLandingCanvasHeight } from './landing-fit';
 import { readViewportProfile } from '../lib/viewport-profile';
-import { isSitePath, sitePath } from '../lib/site-path';
+import { isSitePath, sitePath, sitePathMainList } from '../lib/site-path';
 import {
   FRAME_H,
   FRAME_W,
@@ -16,6 +16,55 @@ import {
 
 const DURATION_MS = 900;
 const EASING = 'cubic-bezier(0.65, 0, 0.35, 1)';
+const MAIN_OPEN_SESSION_KEY = 'exhibition-partition-main';
+
+function hasEnterMainQuery(): boolean {
+  return new URLSearchParams(window.location.search).get('enter') === 'main';
+}
+
+function markMainOpenInSession() {
+  try {
+    sessionStorage.setItem(MAIN_OPEN_SESSION_KEY, '1');
+  } catch {
+    /* private mode */
+  }
+}
+
+function shouldRestoreMainFromSession(): boolean {
+  try {
+    return sessionStorage.getItem(MAIN_OPEN_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function clearMainOpenInSession() {
+  try {
+    sessionStorage.removeItem(MAIN_OPEN_SESSION_KEY);
+  } catch {
+    /* private mode */
+  }
+}
+
+function isReloadNavigation(): boolean {
+  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+  return nav?.type === 'reload';
+}
+
+function syncMainListHistory() {
+  window.history.replaceState({}, '', sitePathMainList());
+}
+
+function cameFromFontDetail(): boolean {
+  const ref = document.referrer;
+  if (!ref) return false;
+  try {
+    const path = new URL(ref).pathname;
+    return /\/fonts\/[^/]+\/?$/.test(path);
+  } catch {
+    return ref.includes('/fonts/');
+  }
+}
 
 const PARTITION_Y = LANDING_PARTITION_Y;
 const PARTITION_H = LANDING_PARTITION_H;
@@ -241,9 +290,8 @@ function finishDesktopOpen(root: HTMLElement, main: HTMLElement, landing: HTMLEl
   main.setAttribute('aria-hidden', 'false');
   main.style.removeProperty('visibility');
   main.style.removeProperty('opacity');
-  if (!isSitePath('main')) {
-    window.history.replaceState({}, '', sitePath('main'));
-  }
+  markMainOpenInSession();
+  syncMainListHistory();
   unlockPageScroll();
 }
 
@@ -368,9 +416,8 @@ async function openPartition(root: HTMLElement, options?: OpenPartitionOptions) 
     overlay.classList.remove('is-revealing');
     root.classList.add('is-open');
     main.setAttribute('aria-hidden', 'false');
-    if (!isSitePath('main')) {
-      window.history.replaceState({}, '', sitePath('main'));
-    }
+    markMainOpenInSession();
+    syncMainListHistory();
     unlockPageScroll();
     return;
   }
@@ -387,22 +434,35 @@ async function openPartition(root: HTMLElement, options?: OpenPartitionOptions) 
   main.setAttribute('aria-hidden', 'false');
   cleanupRevealInlineStyles(root, main);
 
-  if (!isSitePath('main')) {
-    window.history.replaceState({}, '', sitePath('main'));
-  }
+  markMainOpenInSession();
+  syncMainListHistory();
   unlockPageScroll();
 }
 
 function consumeEnterMainQuery(): boolean {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('enter') !== 'main') return false;
-  params.delete('enter');
-  const qs = params.toString();
-  const next = qs
-    ? `${window.location.pathname}?${qs}`
-    : window.location.pathname;
-  window.history.replaceState({}, '', next);
-  return true;
+  return hasEnterMainQuery();
+}
+
+function bindMainListNavigation(root: HTMLElement) {
+  root.addEventListener(
+    'click',
+    (e) => {
+      const anchor = (e.target as Element).closest<HTMLAnchorElement>('a.font-list-item__link');
+      if (!anchor || anchor.target === '_blank') return;
+      if (!root.classList.contains('is-open')) return;
+
+      if (hasEnterMainQuery()) return;
+
+      e.preventDefault();
+      if (isSitePath('main')) {
+        window.history.replaceState({}, '', sitePathMainList());
+      } else {
+        window.history.pushState({}, '', sitePathMainList());
+      }
+      window.location.assign(anchor.href);
+    },
+    true,
+  );
 }
 
 function init() {
@@ -413,9 +473,26 @@ function init() {
     window.history.replaceState({}, '', sitePath(''));
   }
 
-  let activated = consumeEnterMainQuery();
-  if (activated) {
-    void openPartition(root, { instant: true });
+  bindMainListNavigation(root);
+
+  let skipAutoOpen = false;
+  if (isReloadNavigation()) {
+    clearMainOpenInSession();
+    if (hasEnterMainQuery()) {
+      window.history.replaceState({}, '', sitePath(''));
+    }
+    skipAutoOpen = true;
+  }
+
+  let activated = false;
+  if (!skipAutoOpen) {
+    if (consumeEnterMainQuery()) {
+      void openPartition(root, { instant: true });
+      activated = true;
+    } else if (shouldRestoreMainFromSession() && cameFromFontDetail()) {
+      void openPartition(root, { instant: true });
+      activated = true;
+    }
   }
 
   const onActivate = (e?: Event) => {

@@ -111,10 +111,19 @@ function initDesktopInlineGuestbook(root: HTMLElement) {
     fontList.hidden = true;
   };
 
+  const defaultTriggerLabel = () =>
+    fontLabelText.dataset.guestbookTriggerDefault?.trim() ?? DESKTOP_INLINE_PLACEHOLDER;
+
   const applyGuestbookMessageFont = (fontId: string) => {
     const family = exhibitionFontFamily(fontId);
     if (family) messageInput.style.setProperty('font-family', family);
     else messageInput.style.removeProperty('font-family');
+  };
+
+  const applyTriggerLabelFont = (fontId: string) => {
+    const family = exhibitionFontFamily(fontId);
+    if (family) fontLabelText.style.setProperty('font-family', family);
+    else fontLabelText.style.removeProperty('font-family');
   };
 
   const syncMessagePlaceholder = () => {
@@ -128,15 +137,32 @@ function initDesktopInlineGuestbook(root: HTMLElement) {
       : DESKTOP_INLINE_PLACEHOLDER;
   };
 
+  const syncMessageInputEnabled = () => {
+    const hasFont = Boolean(fontInput.value.trim());
+    messageInput.disabled = !hasFont;
+    messageInput.setAttribute('aria-disabled', hasFont ? 'false' : 'true');
+    const submitBtn = form.querySelector<HTMLButtonElement>('.main-desktop-guestbook__submit');
+    if (submitBtn) submitBtn.disabled = !hasFont;
+  };
+
   const setFontId = (fontId: string, label: string) => {
     fontInput.value = fontId;
-    fontLabelText.textContent = label;
+    if (fontId && label) {
+      fontPicker.dataset.selectedFont = fontId;
+      fontLabelText.textContent = label;
+      applyTriggerLabelFont(fontId);
+      applyGuestbookMessageFont(fontId);
+    } else {
+      delete fontPicker.dataset.selectedFont;
+      fontLabelText.textContent = defaultTriggerLabel();
+      fontLabelText.style.removeProperty('font-family');
+      messageInput.style.removeProperty('font-family');
+    }
     fontList.querySelectorAll<HTMLElement>('[role="option"]').forEach((option) => {
       option.setAttribute('aria-selected', option.dataset.fontId === fontId ? 'true' : 'false');
     });
-    if (fontId) applyGuestbookMessageFont(fontId);
-    else messageInput.style.removeProperty('font-family');
     syncMessagePlaceholder();
+    syncMessageInputEnabled();
   };
 
   const toggleFontPicker = () => {
@@ -148,8 +174,10 @@ function initDesktopInlineGuestbook(root: HTMLElement) {
     }
   };
 
+  fontLabelText.style.removeProperty('font-family');
   messageInput.style.removeProperty('font-family');
   syncMessagePlaceholder();
+  syncMessageInputEnabled();
   closeFontPicker();
 
   fontTrigger.addEventListener('click', (e) => {
@@ -408,6 +436,7 @@ function initGuestbook() {
 
   const setFontId = (fontId: string, label: string) => {
     fontInput.value = fontId;
+    fontPicker.dataset.selectedFont = fontId;
     fontLabelText.textContent = label;
     fontList.querySelectorAll<HTMLElement>('[role="option"]').forEach((option) => {
       const selected = option.dataset.fontId === fontId;

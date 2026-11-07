@@ -50,15 +50,112 @@
 :root {
   --dl-w: 1920;
   --dl-h: 1200;
+  --dm-right-x: 630px;
+  --dm-left-inset: 32px;
+  --dm-left-text-inset: 35px;
   --desktop-landing-scale: 1;
+  --desktop-main-scale: var(--desktop-landing-scale);
   --dl-type: 25px;
   --dl-line: 1.625;
   --dl-line-box: calc(var(--dl-type) * var(--dl-line));
+  /* Figma 25:3 — 방명록 트리거·입력 UI */
+  --dl-ui-type: 20px;
+  --dl-ui-line: 1.65;
+  --dl-scrollbar-size: var(--ex-scrollbar-size);
+  --dl-scrollbar-thumb: var(--ex-scrollbar-thumb);
+  --dl-scrollbar-track: var(--ex-scrollbar-track);
   --dl-intro-top: 635px;
   --dl-intro-h: 533px;
   /* Figma 25:2 — 협업 y=881 (참여 블록 635–717 아래) */
   --dl-collab-top: 881px;
   --dl-web-top: 1127px;
+}
+
+/* 얇은 커스텀 스크롤 (Figma 톤) — Firefox */
+[data-viewport='web'] .landing-desktop-viewport,
+[data-viewport='web'] .main-desktop-viewport,
+[data-viewport='web'] .partition-stage.is-open .partition-main,
+[data-viewport='web'] .main-desktop__right,
+[data-viewport='web'] .main-desktop-guestbook__list,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list,
+[data-viewport='web'] .main-desktop-guestbook__input {
+  scrollbar-width: thin;
+  scrollbar-color: var(--dl-scrollbar-thumb) var(--dl-scrollbar-track);
+}
+
+[data-viewport='web'] .landing-desktop-viewport::-webkit-scrollbar,
+[data-viewport='web'] .main-desktop-viewport::-webkit-scrollbar,
+[data-viewport='web'] .partition-stage.is-open .partition-main::-webkit-scrollbar,
+[data-viewport='web'] .main-desktop__right::-webkit-scrollbar,
+[data-viewport='web'] .main-desktop-guestbook__list::-webkit-scrollbar,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list::-webkit-scrollbar,
+[data-viewport='web'] .main-desktop-guestbook__input::-webkit-scrollbar {
+  width: var(--dl-scrollbar-size);
+  height: var(--dl-scrollbar-size);
+}
+
+[data-viewport='web'] .landing-desktop-viewport::-webkit-scrollbar-corner,
+[data-viewport='web'] .main-desktop-viewport::-webkit-scrollbar-corner,
+[data-viewport='web'] .partition-stage.is-open .partition-main::-webkit-scrollbar-corner,
+[data-viewport='web'] .main-desktop__right::-webkit-scrollbar-corner,
+[data-viewport='web'] .main-desktop-guestbook__list::-webkit-scrollbar-corner,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list::-webkit-scrollbar-corner,
+[data-viewport='web'] .main-desktop-guestbook__input::-webkit-scrollbar-corner {
+  background: var(--dl-scrollbar-track);
+}
+
+[data-viewport='web'] .landing-desktop-viewport::-webkit-scrollbar-track,
+[data-viewport='web'] .main-desktop-viewport::-webkit-scrollbar-track,
+[data-viewport='web'] .partition-stage.is-open .partition-main::-webkit-scrollbar-track,
+[data-viewport='web'] .main-desktop__right::-webkit-scrollbar-track,
+[data-viewport='web'] .main-desktop-guestbook__list::-webkit-scrollbar-track,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list::-webkit-scrollbar-track,
+[data-viewport='web'] .main-desktop-guestbook__input::-webkit-scrollbar-track {
+  background: var(--dl-scrollbar-track);
+  border-radius: 0;
+}
+
+[data-viewport='web'] .landing-desktop-viewport::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop-viewport::-webkit-scrollbar-thumb,
+[data-viewport='web'] .partition-stage.is-open .partition-main::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop__right::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop-guestbook__list::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop-guestbook__input::-webkit-scrollbar-thumb {
+  background-color: var(--dl-scrollbar-thumb);
+  background-clip: padding-box;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+[data-viewport='web'] .landing-desktop-viewport::-webkit-scrollbar-button,
+[data-viewport='web'] .main-desktop-viewport::-webkit-scrollbar-button,
+[data-viewport='web'] .partition-stage.is-open .partition-main::-webkit-scrollbar-button,
+[data-viewport='web'] .main-desktop__right::-webkit-scrollbar-button,
+[data-viewport='web'] .main-desktop-guestbook__list::-webkit-scrollbar-button,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list::-webkit-scrollbar-button,
+[data-viewport='web'] .main-desktop-guestbook__input::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* 검정 배경 위 스크롤은 흰 얇은 선 */
+[data-viewport='web'] .main-desktop-guestbook__list,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list,
+[data-viewport='web'] .main-desktop-guestbook__input {
+  --dl-scrollbar-thumb: #fff;
+  scrollbar-color: #fff var(--dl-scrollbar-track);
+}
+
+[data-viewport='web'] .main-desktop-guestbook__list::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list::-webkit-scrollbar-thumb,
+[data-viewport='web'] .main-desktop-guestbook__input::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  border-radius: 0;
 }
 
 .landing-desktop-viewport {
@@ -71,8 +168,8 @@
 
 [data-viewport='web'] .landing-desktop-viewport {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -94,16 +191,15 @@
 [data-viewport='web'] .landing-desktop-scaler {
   position: relative;
   flex-shrink: 0;
-  width: calc(var(--dl-w) * 1px * var(--desktop-landing-scale));
+  width: 100%;
   height: calc(var(--dl-h) * 1px * var(--desktop-landing-scale));
-  margin: auto;
 }
 
 [data-viewport='web'] .landing-desktop__canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--dl-w) * 1px);
+  width: max(calc(var(--dl-w) * 1px), calc(100vw / var(--desktop-landing-scale)));
   height: calc(var(--dl-h) * 1px);
   transform: scale(var(--desktop-landing-scale));
   transform-origin: top left;
@@ -129,9 +225,19 @@
 }
 
 [data-viewport='web'] .landing-desktop__panel--right {
-  left: 630px;
-  width: 1290px;
+  left: var(--dm-right-x);
+  right: 0;
+  width: auto;
   z-index: 3;
+}
+
+/* Figma 25:2 우측 영역(1920−630) — 캔버스가 넓어져도 파티션↔우측 가장자리 중앙 */
+[data-viewport='web'] .landing-desktop__right-slot {
+  position: absolute;
+  top: 0;
+  left: max(0px, calc((100% - (var(--dl-w) - 630) * 1px) / 2));
+  width: calc((var(--dl-w) - 630) * 1px);
+  height: calc(var(--dl-h) * 1px);
 }
 
 [data-viewport='web'] .landing-desktop__partition {
@@ -151,20 +257,23 @@
 
 [data-viewport='web'] .landing-desktop__mast {
   position: absolute;
-  left: 35px;
-  top: 29px;
+  left: var(--dm-left-text-inset);
+  top: 56px;
   margin: 0;
   width: 560px;
-  line-height: 1.5;
+  line-height: var(--dl-line);
+  font-size: var(--dl-type);
 }
 
 [data-viewport='web'] .landing-desktop__intro {
   position: absolute;
-  left: 35px;
+  left: var(--dm-left-text-inset);
   top: var(--dl-intro-top);
   margin: 0;
   width: 560px;
-  height: var(--dl-intro-h);
+  min-height: var(--dl-intro-h);
+  height: auto;
+  overflow: visible;
   line-height: var(--dl-line);
   white-space: pre-wrap;
   word-break: keep-all;
@@ -286,21 +395,31 @@
 [data-viewport='web'] .partition-stage.is-revealing .main-scaled-wrap,
 [data-viewport='web'] .partition-stage.is-open .main-scaled-wrap {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 100%;
-  min-height: min(100dvh, calc(var(--dl-h) * 1px * var(--desktop-landing-scale)));
+  min-height: 100dvh;
   transform: none;
+}
+
+[data-viewport='web'] .partition-stage.is-open {
+  background: #000;
 }
 
 [data-viewport='web'] .partition-stage.is-open .partition-main {
   position: relative;
   inset: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
   visibility: visible;
   opacity: 1;
   z-index: 0;
-  background: #fff;
+  width: 100%;
   min-height: 100dvh;
+  background: transparent;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 [data-viewport='web'] .partition-stage.is-open .landing-desktop-viewport,
@@ -345,25 +464,31 @@
 
 [data-viewport='web'] .main-desktop-viewport {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #000;
 }
+
 
 [data-viewport='web'] .main-desktop-scaler {
   position: relative;
   flex-shrink: 0;
-  width: calc(var(--dl-w) * 1px * var(--desktop-landing-scale));
-  height: calc(var(--dl-h) * 1px * var(--desktop-landing-scale));
+  width: 100%;
+  height: calc(var(--dl-h) * 1px * var(--desktop-main-scale));
 }
 
 [data-viewport='web'] .main-desktop__canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--dl-w) * 1px);
+  width: max(calc(var(--dl-w) * 1px), calc(100vw / var(--desktop-main-scale)));
   height: calc(var(--dl-h) * 1px);
-  transform: scale(var(--desktop-landing-scale));
+  transform: scale(var(--desktop-main-scale));
   transform-origin: top left;
   background: #fff;
   box-sizing: border-box;
@@ -382,7 +507,7 @@
 
 [data-viewport='web'] .main-desktop__header {
   position: absolute;
-  left: 32px;
+  left: var(--dm-left-inset);
   top: 56px;
   width: 560px;
   height: 96px;
@@ -399,7 +524,7 @@
 
 [data-viewport='web'] .main-desktop-guestbook {
   position: absolute;
-  left: 32px;
+  left: var(--dm-left-inset);
   top: 194px;
   width: 560px;
 }
@@ -418,6 +543,10 @@
   height: 55px;
 }
 
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker.is-open {
+  border-bottom-color: transparent;
+}
+
 [data-viewport='web'] .main-desktop-guestbook__trigger {
   display: flex;
   align-items: center;
@@ -425,41 +554,135 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 0 18px;
+  padding: 11px 19px 11px 18px;
   border: none;
   background: transparent;
   color: inherit;
   font-family: var(--font-ui);
-  font-size: 20px;
-  line-height: var(--dl-line);
+  font-size: var(--dl-ui-type);
+  line-height: var(--dl-ui-line);
   cursor: pointer;
   text-align: left;
 }
 
+[data-viewport='web'] .main-desktop-guestbook__trigger-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Figma 25:3 Group 1 — 16×8 chevron */
 [data-viewport='web'] .main-desktop-guestbook__chevron {
+  display: inline-flex;
   flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
   width: 16px;
-  height: 16px;
+  height: 8px;
   margin-left: 12px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg) translateY(-3px);
 }
 
-[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker.is-open .main-desktop-guestbook__chevron {
-  transform: rotate(225deg) translateY(2px);
+[data-viewport='web'] .main-desktop-guestbook__chevron-svg {
+  display: block;
+  width: 16px;
+  height: 8px;
+  transition: transform 0.2s ease;
 }
 
-[data-viewport='web'] .main-desktop-guestbook__list {
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker.is-open .main-desktop-guestbook__chevron-svg {
+  transform: rotate(180deg);
+}
+
+[data-viewport='web'] .main-desktop-guestbook__list,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__list {
   position: absolute;
   left: -2px;
   right: -2px;
-  top: calc(100% + 2px);
+  top: calc(100% - 2px);
   z-index: 5;
-  max-height: min(320px, 40vh);
+  max-height: 480px;
+  margin: 0;
+  padding: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   border: 2px solid #fff;
   background: #000;
+  box-shadow: none;
+}
+
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option {
+  margin: 0;
+  border-top: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option:first-child {
+  border-top: none;
+}
+
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option-btn {
+  display: flex;
+  align-items: center;
+  min-height: 55px;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 11px 18px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-ui);
+  font-size: var(--dl-ui-type);
+  font-weight: 400;
+  line-height: var(--dl-ui-line);
+  text-align: left;
+  cursor: pointer;
+}
+
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option-btn:hover,
+[data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-viewport='web'] .main-desktop-guestbook__input-wrap {
+  position: relative;
+  width: 100%;
+  --dm-guestbook-text-pad-inline: 15px;
+  --dm-guestbook-text-pad-bottom: 16px;
+  --dm-guestbook-submit-inset-inline: 36px;
+  --dm-guestbook-submit-inset-bottom: 32px;
+  --dm-guestbook-submit-w: calc(71px * 0.75);
+  --dm-guestbook-submit-h: calc(29.47px * 0.75);
+}
+
+[data-viewport='web'] .main-desktop-guestbook__submit {
+  position: absolute;
+  right: var(--dm-guestbook-submit-inset-inline);
+  bottom: var(--dm-guestbook-submit-inset-bottom);
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+}
+
+[data-viewport='web'] .main-desktop-guestbook__submit:focus,
+[data-viewport='web'] .main-desktop-guestbook__submit:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+[data-viewport='web'] .main-desktop-guestbook__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+[data-viewport='web'] .main-desktop-guestbook__submit img {
+  display: block;
+  width: var(--dm-guestbook-submit-w);
+  height: auto;
 }
 
 [data-viewport='web'] .main-desktop-guestbook__input {
@@ -467,28 +690,47 @@
   width: 100%;
   height: 326px;
   margin: 0;
-  padding: 16px 18px;
+  padding:
+    23px var(--dm-guestbook-text-pad-inline)
+    calc(var(--dm-guestbook-text-pad-bottom) + var(--dm-guestbook-submit-h) + 6px);
   border: 2px solid #fff;
   background: transparent;
   color: #fff;
   font-family: var(--font-ui);
-  font-size: 20px;
-  line-height: var(--dl-line);
+  font-size: var(--dl-ui-type);
+  line-height: var(--dl-ui-line);
   resize: none;
+}
+
+[data-viewport='web'] .main-desktop-guestbook__input:focus,
+[data-viewport='web'] .main-desktop-guestbook__input:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+[data-viewport='web'] .main-desktop-guestbook__input:disabled {
+  cursor: default;
+  opacity: 1;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
 }
 
 [data-viewport='web'] .main-desktop-guestbook__input::placeholder {
   color: rgba(255, 255, 255, 0.65);
-  font-family: var(--font-ui);
+  font-family: inherit;
+  font-size: var(--dl-ui-type);
+  line-height: var(--dl-ui-line);
 }
 
 [data-viewport='web'] .main-desktop__intro {
   position: absolute;
-  left: 35px;
+  left: var(--dm-left-text-inset);
   top: var(--dl-intro-top);
   width: 560px;
-  height: var(--dl-intro-h);
+  min-height: var(--dl-intro-h);
+  height: auto;
   margin: 0;
+  overflow: visible;
   font-family: var(--font-ui);
   font-size: var(--dl-type);
   line-height: var(--dl-line);
@@ -498,9 +740,10 @@
 
 [data-viewport='web'] .main-desktop__right {
   position: absolute;
-  left: 630px;
+  left: var(--dm-right-x);
   top: 0;
-  width: 1290px;
+  right: 0;
+  width: auto;
   height: calc(var(--dl-h) * 1px);
   background: #fff;
   color: #000;
@@ -510,11 +753,14 @@
 
 [data-viewport='web'] .main-desktop__list {
   --main-visible-rows: 3;
-  --dm-list-pad-top: 48px;
-  --dm-row-budget: calc((var(--dl-h) * 1px - var(--dm-list-pad-top) - 32px) / var(--main-visible-rows));
-  --main-meta-size: 20px;
+  --dm-list-pad-top: 45px;
+  --dm-list-pad-bottom: 45px;
+  --dm-row-budget: calc(
+    (var(--dl-h) * 1px - var(--dm-list-pad-top) - var(--dm-list-pad-bottom)) / var(--main-visible-rows)
+  );
+  --main-meta-size: 22.5px;
   --main-manicule-h: 32px;
-  --main-manicule-gap: 10px;
+  --main-manicule-gap: 7.5px;
   --main-meta-to-preview: 12px;
   --main-row-rule-gap: 28px;
   --main-preview-min-height: calc(var(--dm-row-budget) * 0.55);
@@ -523,11 +769,54 @@
   box-sizing: border-box;
   width: 100%;
   margin: 0;
-  padding: var(--dm-list-pad-top) 50px 40px;
+  padding: var(--dm-list-pad-top) 40px var(--dm-list-pad-bottom);
 }
 
+/* 윗 파티션(구분선) ↔ 다음 제목 = 리스트 상·하단(45px)과 동일 */
 [data-viewport='web'] .main-desktop__list .font-list-item + .font-list-item {
-  padding-top: calc(var(--dm-row-budget) - var(--main-preview-min-height) - 52px);
+  padding-top: var(--dm-list-pad-top);
+}
+
+/* 제목 ↔ 마키 ↔ 밑 파티션 — 행 내부 간격 */
+[data-viewport='web'] .main-desktop__list .font-list-item {
+  --dm-row-stack-gap: 28px;
+  gap: var(--dm-row-stack-gap);
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dm-row-stack-gap);
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item__rule {
+  margin: 0;
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item__carousel {
+  min-height: var(--main-preview-min-height);
+  align-items: center;
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item[data-font-id='seopung'] .font-list-item__rule {
+  display: none;
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item[data-font-id='seopung']:last-child .font-list-item__carousel {
+  min-height: auto;
+  align-items: flex-start;
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item[data-font-id='popcorn'] .font-list-item__preview,
+[data-viewport='web'] .main-desktop__list .font-list-item[data-font-id='ulmeok'] .font-list-item__preview {
+  line-height: 1.15;
+}
+
+[data-viewport='web'] .main-desktop__list .font-list-item[data-font-id='popcorn'] .font-list-item__carousel,
+[data-viewport='web'] .main-desktop__list .font-list-item[data-font-id='ulmeok'] .font-list-item__carousel {
+  min-height: calc(var(--main-preview-min-height) + 8px);
+  padding-bottom: 4px;
+  box-sizing: border-box;
 }
 
 [data-viewport='web'] .main-desktop__list .font-list-item__manicule-img {
@@ -554,7 +843,7 @@
   object-position: left top;
 }
 
-[data-viewport='web'] .main-list {
+[data-viewport='web'] .main-list:not(.main-desktop__list) {
   padding-top: var(--main-header-to-list);
   padding-bottom: calc(var(--guestbook-height) + 24px);
 }

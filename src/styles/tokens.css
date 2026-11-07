@@ -148,6 +148,10 @@
   --detail-specimen-min-h: calc(480 * var(--vfh));
   --detail-specimen-default-size: calc(52 * var(--vf));
 
+  --ex-scrollbar-size: 1.5px;
+  --ex-scrollbar-thumb: #000;
+  --ex-scrollbar-track: transparent;
+
   --guestbook-panel-section-gap: calc(60 * var(--vfh));
   --guestbook-panel-pad-top: var(--guestbook-panel-section-gap);
   --guestbook-panel-toolbar-gap: var(--guestbook-panel-section-gap);
