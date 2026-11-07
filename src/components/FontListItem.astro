@@ -1,5 +1,6 @@
 ---
 import type { FontEntry } from '../lib/types';
+import { maniculeImagePath } from '../lib/manicules';
 
 interface Props {
   font: FontEntry;
@@ -8,12 +9,27 @@ interface Props {
 
 const { font, previewPhrase } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const maniculeRel = maniculeImagePath(font.id);
+const maniculeSrc = maniculeRel ? `${base}${maniculeRel}` : null;
 ---
 
 <article class="font-list-item" data-font-id={font.id}>
   <a href={`${base}fonts/${font.id}`} class="font-list-item__link">
     <p class="font-list-item__meta">
-      <span class="font-list-item__name">{font.name}</span><span class="sep" aria-hidden="true"> ☞ </span>{font.designer}
+      <span class="font-list-item__name">{font.name}</span>
+      {
+        maniculeSrc ? (
+          <span class="font-list-item__manicule" aria-hidden="true">
+            <img class="font-list-item__manicule-img" src={maniculeSrc} alt="" loading="lazy" decoding="async" />
+          </span>
+        ) : (
+          <span class="sep" aria-hidden="true">
+            {' '}
+            ☞{' '}
+          </span>
+        )
+      }
+      <span class="font-list-item__designer">{font.designer}</span>
     </p>
     <div class="font-list-item__carousel" aria-label={previewPhrase}>
       <div class="font-list-item__carousel-track">

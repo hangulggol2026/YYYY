@@ -42,6 +42,7 @@
 
   --font-ui: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   --font-specimen: 'Seopung', 'ExhibitionBlank';
+  --exhibition-glyphs-scale: 1;
 
   --specimen-size: calc(24 * var(--vf));
   --specimen-letter-spacing: 0em;
@@ -109,6 +110,8 @@
   --main-preview-min-height: calc(471 * var(--vfh) * 0.75);
   --main-row-rule-gap: calc(41 * var(--vfh));
   --main-meta-size: calc(47 * var(--vf));
+  --main-manicule-h: calc(var(--main-meta-size) * 1.625);
+  --main-manicule-gap: calc(10 * var(--vf));
   --main-preview-size: calc(290 * var(--vf) * 0.75);
   --main-marquee-duration: 28s;
   --main-marquee-gap: calc(56 * var(--vf));
@@ -118,6 +121,9 @@
   --detail-hero-pad-top: calc(56 * var(--vfh));
   --detail-hero-pad-bottom: calc(40 * var(--vfh));
   --detail-title-size: calc(132 * var(--vf));
+  --detail-title-scale: 1;
+  --detail-title-line-height: var(--detail-hero-title-lh);
+  --detail-title-pad-block: 0;
   --detail-designer-size: calc(44 * var(--vf));
   --detail-caption-size: calc(52 * var(--vf));
   --detail-caption-gap: calc(32 * var(--vfh));
@@ -129,7 +135,12 @@
   --detail-controls-pad-y: calc(56 * var(--vfh));
   --detail-slider-gap: calc(40 * var(--vfh));
   --detail-slider-label-size: calc(36 * var(--vf));
-  --detail-slider-label-zone: calc(220 * var(--vf));
+  --detail-slider-icon-h: calc(36 * var(--vf));
+  --detail-slider-icon-col: calc(52 * var(--vf));
+  --detail-slider-icon-to-value: calc(28 * var(--vf));
+  --detail-slider-value-zone: calc(108 * var(--vf));
+  --detail-slider-value-to-track: calc(44 * var(--vf));
+  --detail-slider-value-size: calc(36 * var(--vf));
   --detail-slider-track-height: calc(52 * var(--vf));
   --detail-slider-thumb-w: 3px;
   --detail-slider-thumb-h: calc(40 * var(--vf));

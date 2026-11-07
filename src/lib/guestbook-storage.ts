@@ -1,5 +1,3 @@
-import { getSupabase, isGuestbookShared } from './supabase-client';
-
 export const GUESTBOOK_STORAGE_KEY = 'guestbook:entries';
 
 export type GuestbookEntry = {
@@ -48,11 +46,17 @@ function appendLocalGuestbookEntry(entry: Omit<GuestbookEntry, 'createdAt'>) {
 
 /** Shared list when Supabase env is set; otherwise this device only (local dev). */
 export function guestbookUsesSharedStorage(): boolean {
-  return isGuestbookShared();
+  return Boolean(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
+}
+
+async function sharedClient() {
+  if (!guestbookUsesSharedStorage()) return null;
+  const { getSupabase } = await import('./supabase-client');
+  return getSupabase();
 }
 
 export async function readGuestbookEntries(): Promise<GuestbookEntry[]> {
-  const supabase = getSupabase();
+  const supabase = await sharedClient();
   if (!supabase) {
     return readLocalGuestbookEntries();
   }
@@ -70,7 +74,7 @@ export async function appendGuestbookEntry(entry: Omit<GuestbookEntry, 'createdA
   const text = entry.text.trim();
   if (!text) return;
 
-  const supabase = getSupabase();
+  const supabase = await sharedClient();
   if (!supabase) {
     appendLocalGuestbookEntry({ fontId: entry.fontId, text });
     return;

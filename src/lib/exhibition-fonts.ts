@@ -10,6 +10,56 @@ export type ExhibitionFontFace = {
 export const EXHIBITION_BLANK_FAMILY = 'ExhibitionBlank';
 export const EXHIBITION_BLANK_FILE = 'ExhibitionBlank.woff2';
 
+/** Blank face matches medium specimen weight (서풍). */
+const EXHIBITION_BLANK_WEIGHTS = [400, 500] as const;
+
+/**
+ * Main list marquee only — compensate ink that extends beyond the em box at the same CSS font-size.
+ * 1 = no change.
+ */
+export const EXHIBITION_GLYPHS_SCALE: Partial<Record<string, number>> = {
+  byeokjomok: 0.5,
+};
+
+/**
+ * Detail hero title compensation (ink / OS² metrics vs peers at --detail-title-size).
+ * `scale` ≈ median peer ink height ÷ this face’s title ink height (e.g. 벽조목 ≈ 0.88/1.71).
+ */
+export type ExhibitionDetailTitleComp = {
+  scale: number;
+  lineHeight?: number;
+  padBlock?: string;
+};
+
+export const EXHIBITION_DETAIL_TITLE_COMP: Partial<Record<string, ExhibitionDetailTitleComp>> = {
+  byeokjomok: {
+    scale: 0.52,
+    lineHeight: 1,
+    padBlock: 'calc(10 * var(--vf))',
+  },
+};
+
+/**
+ * Mobile detail hero — extra caption `margin-top` offset vs 어스름 (inline headline flow).
+ * Desktop uses grid row gap; deltas are injected only under `html:not([data-viewport='web'])`.
+ */
+export const EXHIBITION_DETAIL_CAPTION_GAP_DELTA: Partial<Record<string, string>> = {
+  byeokjomok: 'calc(-8.5 * var(--vf))',
+  doldol: 'calc(-4 * var(--vf))',
+};
+
+export function exhibitionGlyphsScale(fontId: string): number {
+  return EXHIBITION_GLYPHS_SCALE[fontId] ?? 1;
+}
+
+export function exhibitionDetailTitleComp(fontId: string): ExhibitionDetailTitleComp | null {
+  return EXHIBITION_DETAIL_TITLE_COMP[fontId] ?? null;
+}
+
+export function exhibitionDetailCaptionGapDelta(fontId: string): string | null {
+  return EXHIBITION_DETAIL_CAPTION_GAP_DELTA[fontId] ?? null;
+}
+
 export const EXHIBITION_FONTS: Record<string, ExhibitionFontFace> = {
   ilgwasa: { family: 'Ilgwasa', files: [{ weight: 400, file: 'ilgwasa.woff2' }] },
   nori: { family: 'Nori', files: [{ weight: 400, file: 'nori.woff2' }] },
@@ -55,13 +105,15 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
   const apply: string[] = [];
 
   const blankUrl = `${baseUrl}fonts/exhibition/${EXHIBITION_BLANK_FILE}`;
-  faces.push(`@font-face {
+  for (const weight of EXHIBITION_BLANK_WEIGHTS) {
+    faces.push(`@font-face {
   font-family: '${EXHIBITION_BLANK_FAMILY}';
   src: url('${blankUrl}') format('woff2');
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${weight};
   font-display: block;
 }`);
+  }
 
   for (const [id, entry] of Object.entries(EXHIBITION_FONTS)) {
     for (const face of entry.files) {
@@ -83,6 +135,32 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
 .guestbook-entry[data-font-id='${id}'] .font-list-item__preview {
   font-family: ${family};
 }`);
+
+    const glyphScale = exhibitionGlyphsScale(id);
+    if (glyphScale !== 1) {
+      apply.push(`.font-list-item:not(.guestbook-entry)[data-font-id='${id}'] {
+  --exhibition-glyphs-scale: ${glyphScale};
+}`);
+    }
+
+    const titleComp = exhibitionDetailTitleComp(id);
+    if (titleComp) {
+      const vars = [`  --detail-title-scale: ${titleComp.scale};`];
+      if (titleComp.lineHeight != null) {
+        vars.push(`  --detail-title-line-height: ${titleComp.lineHeight};`);
+      }
+      if (titleComp.padBlock) {
+        vars.push(`  --detail-title-pad-block: ${titleComp.padBlock};`);
+      }
+      apply.push(`body.page-detail.page-font-${id} {\n${vars.join('\n')}\n}`);
+    }
+
+    const captionGapDelta = exhibitionDetailCaptionGapDelta(id);
+    if (captionGapDelta) {
+      apply.push(
+        `html:not([data-viewport='web']) body.page-detail.page-font-${id} {\n  --detail-caption-gap-delta: ${captionGapDelta};\n}`,
+      );
+    }
   }
 
   return `${faces.join('\n')}\n${apply.join('\n')}`;
@@ -90,9 +168,10 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
 
 /** CSS font shorthand list for document.fonts.load (family + weights). */
 export function exhibitionFontLoadDescriptors(): { family: string; weight: number }[] {
-  const list: { family: string; weight: number }[] = [
-    { family: EXHIBITION_BLANK_FAMILY, weight: 400 },
-  ];
+  const list: { family: string; weight: number }[] = EXHIBITION_BLANK_WEIGHTS.map((weight) => ({
+    family: EXHIBITION_BLANK_FAMILY,
+    weight,
+  }));
   for (const entry of Object.values(EXHIBITION_FONTS)) {
     for (const face of entry.files) {
       list.push({ family: entry.family, weight: face.weight });

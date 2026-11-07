@@ -14,6 +14,10 @@ export function getStaticPaths() {
 
 const { font } = Astro.props;
 const specimenDefault = exhibition.defaultSpecimenText;
+const leadingMin = 130;
+const defaultLeading = font.specimenLeading ?? 185;
+/** Default sits at the center of the leading slider track (symmetric min/max). */
+const leadingMax = defaultLeading + (defaultLeading - leadingMin);
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -25,7 +29,7 @@ const base = import.meta.env.BASE_URL;
   <div class="detail-page">
   <LayoutGrid bleed dark class="detail-hero">
     <div class="span-8 detail-hero__top">
-      <a href={`${base}main`} class="detail-back" aria-label="목록으로">
+      <a href={`${base}?enter=main`} class="detail-back" aria-label="목록으로">
         <span class="detail-back__chevron" aria-hidden="true"></span>
       </a>
       <div class="detail-hero__headline">
@@ -48,7 +52,19 @@ const base = import.meta.env.BASE_URL;
   <LayoutGrid light class="detail-controls">
     <div class="span-8" data-specimen-controls>
       <div class="typo-slider-row">
-        <span class="typo-slider-row__label" id="label-size">글자 크기</span>
+        <span class="typo-slider-row__label" id="label-size">
+          <img
+            class="typo-slider-row__icon"
+            src={`${base}assets/typo/font-size.svg`}
+            alt=""
+            width="21"
+            height="18"
+            decoding="async"
+            aria-hidden="true"
+          />
+          <span class="visually-hidden">글자 크기</span>
+        </span>
+        <span class="typo-slider-row__value" id="value-size" data-slider-value="size">52px</span>
         <input
           id="slider-size"
           type="range"
@@ -57,10 +73,23 @@ const base = import.meta.env.BASE_URL;
           value="52"
           data-slider="size"
           aria-labelledby="label-size"
+          aria-describedby="value-size"
         />
       </div>
       <div class="typo-slider-row">
-        <span class="typo-slider-row__label" id="label-tracking">글자 사이</span>
+        <span class="typo-slider-row__label" id="label-tracking">
+          <img
+            class="typo-slider-row__icon"
+            src={`${base}assets/typo/letter-spacing.svg`}
+            alt=""
+            width="21"
+            height="18"
+            decoding="async"
+            aria-hidden="true"
+          />
+          <span class="visually-hidden">글자 사이</span>
+        </span>
+        <span class="typo-slider-row__value" id="value-tracking" data-slider-value="tracking">0%</span>
         <input
           id="slider-tracking"
           type="range"
@@ -69,18 +98,34 @@ const base = import.meta.env.BASE_URL;
           value="0"
           data-slider="tracking"
           aria-labelledby="label-tracking"
+          aria-describedby="value-tracking"
         />
       </div>
       <div class="typo-slider-row">
-        <span class="typo-slider-row__label" id="label-leading">글줄 사이</span>
+        <span class="typo-slider-row__label" id="label-leading">
+          <img
+            class="typo-slider-row__icon"
+            src={`${base}assets/typo/line-height.svg`}
+            alt=""
+            width="25"
+            height="18"
+            decoding="async"
+            aria-hidden="true"
+          />
+          <span class="visually-hidden">글줄 사이</span>
+        </span>
+        <span class="typo-slider-row__value" id="value-leading" data-slider-value="leading"
+          >{`${defaultLeading}%`}</span
+        >
         <input
           id="slider-leading"
           type="range"
-          min="130"
-          max="240"
-          value="185"
+          min={leadingMin}
+          max={leadingMax}
+          value={defaultLeading}
           data-slider="leading"
           aria-labelledby="label-leading"
+          aria-describedby="value-leading"
         />
       </div>
     </div>

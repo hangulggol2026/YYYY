@@ -134,12 +134,24 @@ function init() {
     });
   };
 
+  const syncSliderReadouts = (size: number, tracking: number, leading: number) => {
+    const set = (name: string, text: string) => {
+      const el = controls.querySelector<HTMLElement>(`[data-slider-value="${name}"]`);
+      if (el) el.textContent = text;
+    };
+    set('size', `${Math.round(size)}px`);
+    const track = Math.round(tracking);
+    set('tracking', `${track}%`);
+    set('leading', `${Math.round(leading)}%`);
+  };
+
   const update = () => {
     const size = sizeInput ? Number(sizeInput.value) : 52;
     const tracking = trackingInput ? Number(trackingInput.value) : 0;
     const leading = leadingInput ? Number(leadingInput.value) : 185;
     applyVars(scope, size, tracking, leading);
     applyWeight(scope, activeWeight);
+    syncSliderReadouts(size, tracking, leading);
   };
 
   sizeInput?.addEventListener('input', update);

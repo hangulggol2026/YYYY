@@ -19,3 +19,9 @@ export function isSitePath(relative: string): boolean {
   const current = window.location.pathname.replace(/\/$/, '');
   return current === want;
 }
+
+/** Index with partition already open (detail / guestbook → list; not used on cold /main/ refresh). */
+export function sitePathMainList(): string {
+  const path = sitePath('');
+  return path.includes('?') ? `${path}&enter=main` : `${path}?enter=main`;
+}

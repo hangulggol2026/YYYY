@@ -1,6 +1,6 @@
 import { appendGuestbookEntry } from '../lib/guestbook-storage';
 import { exhibitionFontFamily } from '../lib/exhibition-fonts';
-import { isSitePath, normalizePathname, sitePath } from '../lib/site-path';
+import { isSitePath, normalizePathname, sitePath, sitePathMainList } from '../lib/site-path';
 import { syncViewportScale } from './viewport-scale';
 
 const OPEN_CLASS = 'is-open';
@@ -447,7 +447,7 @@ function initGuestbook() {
 
       if (isGuestbookListPage()) {
         e.preventDefault();
-        window.location.assign(sitePath('main'));
+        window.location.assign(sitePathMainList());
       }
     });
   });

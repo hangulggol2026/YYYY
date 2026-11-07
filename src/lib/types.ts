@@ -4,14 +4,12 @@ export interface FontEntry {
   designer: string;
   instagram: string;
   caption: string;
+  /** Detail specimen default leading (slider %, 185 = line-height 1.85). */
+  specimenLeading?: number;
 }
 
 export interface FontsData {
   specimenFontFile: string;
   cssFamily: string;
   fonts: FontEntry[];
-}
-
-export function getFontById(data: FontsData, id: string): FontEntry | undefined {
-  return data.fonts.find((f) => f.id === id);
 }

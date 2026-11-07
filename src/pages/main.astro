@@ -1,9 +1,22 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import MainView from '../components/MainView.astro';
-import exhibition from '../../data/exhibition.json';
+/** Full reload on /main/ always starts at the landing (partition lives on index). */
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={`목록 | ${exhibition.title}`}>
-  <MainView />
-</BaseLayout>
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>옆의 옆의 옆의 옆에</title>
+    <script is:inline define:vars={{ base }}>
+      (function () {
+        var ref = document.referrer || '';
+        var fromListShortcut =
+          ref.indexOf('/fonts/') !== -1 || ref.indexOf('/guestbook') !== -1;
+        location.replace(fromListShortcut ? base + '?enter=main' : base);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

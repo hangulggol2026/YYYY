@@ -224,13 +224,15 @@ function cleanupRevealInlineStyles(root: HTMLElement, main: HTMLElement | null) 
   root.style.removeProperty('--reveal-canvas-left');
 }
 
-async function openPartition(root: HTMLElement) {
+type OpenPartitionOptions = { instant?: boolean };
+
+async function openPartition(root: HTMLElement, options?: OpenPartitionOptions) {
   if (root.classList.contains('is-open') || root.classList.contains('is-revealing')) return;
 
   const overlay = root.querySelector<HTMLElement>('[data-partition-overlay]');
   const main = root.querySelector<HTMLElement>('[data-partition-main]');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const duration = reduced ? 0 : DURATION_MS;
+  const duration = options?.instant || reduced ? 0 : DURATION_MS;
 
   if (!overlay || !main) return;
 
@@ -279,19 +281,31 @@ async function openPartition(root: HTMLElement) {
   unlockPageScroll();
 }
 
+function consumeEnterMainQuery(): boolean {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('enter') !== 'main') return false;
+  params.delete('enter');
+  const qs = params.toString();
+  const next = qs
+    ? `${window.location.pathname}?${qs}`
+    : window.location.pathname;
+  window.history.replaceState({}, '', next);
+  return true;
+}
+
 function init() {
   const root = document.querySelector<HTMLElement>('[data-partition-root]');
   if (!root) return;
 
   if (isSitePath('main')) {
-    root.classList.add('is-open');
-    root.querySelector('[data-partition-main]')?.setAttribute('aria-hidden', 'false');
-    unlockPageScroll();
-    return;
+    window.history.replaceState({}, '', sitePath(''));
   }
 
   const interact = root.querySelector<HTMLElement>('[data-landing-interaction]');
-  let activated = false;
+  let activated = consumeEnterMainQuery();
+  if (activated) {
+    void openPartition(root, { instant: true });
+  }
   let touchStartY = 0;
   let touchStartX = 0;
   let touchMoved = false;
@@ -356,6 +370,11 @@ function init() {
     },
     { passive: true },
   );
+
+  window.addEventListener('landing:enter-main', (e) => {
+    const instant = (e as CustomEvent<{ instant?: boolean }>).detail?.instant === true;
+    void openPartition(root, instant ? { instant: true } : undefined);
+  });
 }
 
 init();

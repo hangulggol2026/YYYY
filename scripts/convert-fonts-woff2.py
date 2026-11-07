@@ -18,13 +18,13 @@ EXHIBITION = ROOT / "public" / "fonts" / "exhibition"
 
 # Source filename in Fonts/ → public id (matches exhibition-fonts.ts)
 SOURCE_MAP: dict[str, str] = {
-    "OneAndAQuarter-Regular.otf": "ilgwasa",
+    "OneAndAQuarter_edited.otf": "ilgwasa",
     "nori-Regular.otf": "nori",
     "mangul-Regular.otf": "mangul",
     "Bunhaeneung_Regular.otf": "gamtu",
     "Hapum-Regular.otf": "yawp",
     "허당_박혜원-Regular.otf": "heodang",
-    "Eoseureum-Regular.otf": "eoseureum",
+    "Eoseureum-Regular_edited.otf": "eoseureum",
     "doldol-Regular.otf": "doldol",
     "dragonfly-Regular.otf": "jamjari",
     "ulmeok-Regular.otf": "ulmeok",
@@ -51,9 +51,14 @@ def build_blank_woff2(out: Path) -> None:
     fb.setupHorizontalMetrics(metrics)
     fb.setupHorizontalHeader(ascent=800, descent=-200)
     cmap: dict[int, str] = {}
+    # Mapped → invisible glyph. Primary exhibition face is tried first; only missing
+    # codepoints use this face (e.g. English letters), not punctuation present in the font.
     for start, end in (
         (0x20, 0x7E),
         (0xA0, 0xFF),
+        (0x0100, 0x017F),
+        (0x0180, 0x024F),
+        (0x1E00, 0x1EFF),
         (0x1100, 0x11FF),
         (0x3000, 0x303F),
         (0x3130, 0x318F),
