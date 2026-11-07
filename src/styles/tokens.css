@@ -168,9 +168,13 @@ html[data-exhibition-fit='contain'] {
 }
 
 @media (min-width: 1277px) {
-  :root {
+  :root:not([data-viewport='web']) {
     --vb: calc(var(--frame-w) * 1px);
   }
+}
+
+html[data-viewport='web'] {
+  --vb: min(100vw, calc(1920 * 1px));
 }
 
 @media (min-height: 2776px) {

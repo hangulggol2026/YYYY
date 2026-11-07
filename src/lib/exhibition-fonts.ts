@@ -41,7 +41,7 @@ export const EXHIBITION_DETAIL_TITLE_COMP: Partial<Record<string, ExhibitionDeta
 
 /**
  * Mobile detail hero — extra caption `margin-top` offset vs 어스름 (inline headline flow).
- * Desktop uses grid row gap; deltas are injected only under `html:not([data-viewport='web'])`.
+ * Per-face caption offset vs 어스름; applied on all viewports when set.
  */
 export const EXHIBITION_DETAIL_CAPTION_GAP_DELTA: Partial<Record<string, string>> = {
   byeokjomok: 'calc(-8.5 * var(--vf))',
@@ -158,7 +158,7 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
     const captionGapDelta = exhibitionDetailCaptionGapDelta(id);
     if (captionGapDelta) {
       apply.push(
-        `html:not([data-viewport='web']) body.page-detail.page-font-${id} {\n  --detail-caption-gap-delta: ${captionGapDelta};\n}`,
+        `body.page-detail.page-font-${id} {\n  --detail-caption-gap-delta: ${captionGapDelta};\n}`,
       );
     }
   }

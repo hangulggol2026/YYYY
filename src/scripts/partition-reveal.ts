@@ -1,4 +1,5 @@
 import { releaseLandingScrollLock, syncLandingCanvasHeight } from './landing-fit';
+import { readViewportProfile } from '../lib/viewport-profile';
 import { isSitePath, sitePath } from '../lib/site-path';
 import {
   FRAME_H,
@@ -226,8 +227,119 @@ function cleanupRevealInlineStyles(root: HTMLElement, main: HTMLElement | null) 
 
 type OpenPartitionOptions = { instant?: boolean };
 
+function usesDesktopLanding(root: HTMLElement): boolean {
+  return readViewportProfile() === 'web' && !!root.querySelector('[data-landing-desktop]');
+}
+
+function finishDesktopOpen(root: HTMLElement, main: HTMLElement, landing: HTMLElement | null) {
+  root.classList.remove('is-revealing');
+  landing?.classList.remove('is-revealing');
+  landing?.closest('.landing-desktop-viewport')?.classList.remove('is-revealing');
+  landing?.querySelector<HTMLElement>('[data-landing-desktop-partition]')?.removeAttribute('style');
+  landing?.querySelector<HTMLElement>('[data-landing-desktop-right]')?.style.removeProperty('opacity');
+  root.classList.add('is-open');
+  main.setAttribute('aria-hidden', 'false');
+  main.style.removeProperty('visibility');
+  main.style.removeProperty('opacity');
+  if (!isSitePath('main')) {
+    window.history.replaceState({}, '', sitePath('main'));
+  }
+  unlockPageScroll();
+}
+
+async function runDesktopRevealAnimations(
+  root: HTMLElement,
+  landing: HTMLElement,
+  main: HTMLElement,
+  duration: number,
+) {
+  const partition = landing.querySelector<HTMLElement>('[data-landing-desktop-partition]');
+  const right = landing.querySelector<HTMLElement>('[data-landing-desktop-right]');
+  if (!partition || !right) return;
+
+  main.style.visibility = 'visible';
+  main.style.opacity = '1';
+
+  await waitFrames(2);
+
+  const motion = { duration, easing: EASING, fill: 'forwards' as FillMode };
+  const slitW = 10;
+  const slitLeft = 620;
+  const openW = 1290;
+
+  Object.assign(partition.style, {
+    position: 'absolute',
+    left: `${slitLeft}px`,
+    top: '0',
+    height: '100%',
+    width: `${slitW}px`,
+    background: '#ffffff',
+    zIndex: '6',
+  });
+
+  const animations: Animation[] = [
+    partition.animate(
+      [
+        { width: `${slitW}px`, offset: 0 },
+        { width: `${openW}px`, offset: 1 },
+      ],
+      motion,
+    ),
+    right.animate([{ opacity: '1' }, { opacity: '0' }], {
+      duration: duration * 0.85,
+      easing: EASING,
+      fill: 'forwards',
+    }),
+  ];
+
+  await Promise.all(
+    animations.map(
+      (anim) =>
+        new Promise<void>((resolve) => {
+          anim.addEventListener('finish', () => resolve(), { once: true });
+          anim.addEventListener('cancel', () => resolve(), { once: true });
+        }),
+    ),
+  );
+
+  animations.forEach((anim) => anim.cancel());
+}
+
+async function openPartitionDesktop(root: HTMLElement, options?: OpenPartitionOptions) {
+  if (root.classList.contains('is-open') || root.classList.contains('is-revealing')) return;
+
+  const main = root.querySelector<HTMLElement>('[data-partition-main]');
+  const landing = root.querySelector<HTMLElement>('[data-landing-desktop]');
+  if (!main || !landing) return;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const duration = options?.instant || reduced ? 0 : DURATION_MS;
+
+  root.classList.add('is-revealing');
+  landing.classList.add('is-revealing');
+  landing.closest('.landing-desktop-viewport')?.classList.add('is-revealing');
+
+  if (duration === 0) {
+    finishDesktopOpen(root, main, landing);
+    return;
+  }
+
+  try {
+    await runDesktopRevealAnimations(root, landing, main, duration);
+  } catch {
+    /* fall through */
+  }
+
+  finishDesktopOpen(root, main, landing);
+}
+
 async function openPartition(root: HTMLElement, options?: OpenPartitionOptions) {
   if (root.classList.contains('is-open') || root.classList.contains('is-revealing')) return;
+
+  if (usesDesktopLanding(root)) {
+    await openPartitionDesktop(root, options);
+    return;
+  }
 
   const overlay = root.querySelector<HTMLElement>('[data-partition-overlay]');
   const main = root.querySelector<HTMLElement>('[data-partition-main]');
@@ -301,15 +413,10 @@ function init() {
     window.history.replaceState({}, '', sitePath(''));
   }
 
-  const interact = root.querySelector<HTMLElement>('[data-landing-interaction]');
   let activated = consumeEnterMainQuery();
   if (activated) {
     void openPartition(root, { instant: true });
   }
-  let touchStartY = 0;
-  let touchStartX = 0;
-  let touchMoved = false;
-  const TAP_SLOP_PX = 12;
 
   const onActivate = (e?: Event) => {
     if (activated) return;
@@ -317,6 +424,32 @@ function init() {
     e?.preventDefault();
     void openPartition(root);
   };
+
+  const desktopInteract = root.querySelector<HTMLElement>('[data-landing-desktop-interaction]');
+  const mobileInteract = root.querySelector<HTMLElement>('[data-landing-interaction]');
+
+  if (desktopInteract && usesDesktopLanding(root)) {
+    desktopInteract.addEventListener('click', (e) => onActivate(e));
+    desktopInteract.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') onActivate(e);
+    });
+  } else if (!mobileInteract) {
+    return;
+  }
+
+  if (!mobileInteract || usesDesktopLanding(root)) {
+    window.addEventListener('landing:enter-main', (e) => {
+      const instant = (e as CustomEvent<{ instant?: boolean }>).detail?.instant === true;
+      void openPartition(root, instant ? { instant: true } : undefined);
+    });
+    return;
+  }
+
+  const interact = mobileInteract;
+  let touchStartY = 0;
+  let touchStartX = 0;
+  let touchMoved = false;
+  const TAP_SLOP_PX = 12;
 
   const isCoarseTouch = () =>
     window.matchMedia('(hover: none) and (pointer: coarse)').matches;

@@ -1,29 +1,19 @@
 ---
-description: Figma 1277 artboard — fixed 8-column layout for all exhibition pages
+description: Layout grid — 8 columns (mobile) / 12 columns (desktop web)
+globs: src/**/*.{astro,css,ts}
 alwaysApply: true
 ---
 
-# 8-column layout (fixed grid)
+# Layout grid (mobile 8 / desktop 12)
 
-This project uses a **fixed** layout grid aligned to Figma **1277×2776** (margin **60px**, gutter **20px**, **8 columns**).
-
-## Structure
-
-- Wrap page sections in `LayoutGrid` → `layout-frame` → `grid-8` (do not reimplement margins ad hoc).
-- Place content on the grid with `span-8` (full row) or `col-*` as needed.
-- Direct children of `grid-8` that span the content width must use `grid-column: 1 / -1` (e.g. `.font-list-item`, `.site-header`, `.guestbook-entry`).
-
-## Tokens
-
-- Horizontal inset: `var(--layout-margin)` via `.layout-frame` padding.
-- Content width: 1157px design (`--layout-content-max`).
+- Wrap sections in `LayoutGrid` → `layout-frame` → `layout-grid` (`.grid-8` + `.layout-grid`).
+- **Mobile:** 8 columns, margin `var(--layout-margin)`, Figma 1277×2776 scale via `--vf`.
+- **Desktop (`data-viewport="web"`):** 12 columns; edge inset `--web-edge` only; `--grid-gutter` 36–56px; profile = `(hover: hover) and (pointer: fine)`.
+- Full-width children: `span-8` (both breakpoints) or `grid-column: 1 / -1`.
+- On desktop main list, `.font-list-item` spans **6** (2-up) or **4** (3-up ≥1800px) — see `web-desktop.css`.
 
 ## Avoid
 
-- Centering blocks with `max-width` + `margin: auto` outside the grid when the rest of the site uses `LayoutGrid`.
-- Wrapping all list rows in an extra `div` inside `grid-8` — use `display: contents` on a data container if the DOM must stay script-friendly.
-
-## Guestbook
-
-- List page: same as main list (`LayoutGrid` + entries as `grid-8` children).
-- Write panel: `layout-frame` + `grid-8` inside the sheet; toolbar, textarea, submit each `span-8`.
+- Ad-hoc `max-width` + `margin: auto` outside the grid.
+- Separate desktop-only landing UI or extra nav — landing uses the mobile partition canvas on all viewports.
+- `display: contents` on list containers when entries must sit on the grid (guestbook list).

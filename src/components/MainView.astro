@@ -3,20 +3,25 @@ import SiteHeader from './SiteHeader.astro';
 import FontListItem from './FontListItem.astro';
 import GuestbookSticky from './GuestbookSticky.astro';
 import LayoutGrid from './LayoutGrid.astro';
+import MainDesktop from './MainDesktop.astro';
 import fontsData from '../../data/fonts.json';
 import exhibition from '../../data/exhibition.json';
 ---
 
-<LayoutGrid bleed dark class="main-header">
-  <SiteHeader variant="onDark" />
-</LayoutGrid>
+<MainDesktop />
 
-<LayoutGrid light class="main-list">
-  {
+<div class="main-mobile-chrome" data-main-mobile>
+  <LayoutGrid bleed dark class="main-header">
+    <SiteHeader variant="onDark" />
+  </LayoutGrid>
+
+  <LayoutGrid light class="main-list">
+    {
       fontsData.fonts.map((font) => (
         <FontListItem font={font} previewPhrase={exhibition.previewPhrase} />
       ))
-  }
-</LayoutGrid>
+    }
+  </LayoutGrid>
 
-<GuestbookSticky />
+  <GuestbookSticky />
+</div>

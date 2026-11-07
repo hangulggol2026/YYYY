@@ -1,7 +1,7 @@
 ---
 description: Landing lower credits (mobile canvas) spacing and web+logos row
 alwaysApply: false
-globs: **/LandingCredits.astro,**/index.astro,**/LandingDesktop.astro,**/global.css,**/landing-fit.ts,**/tokens.css,**/design-frame.ts
+globs: **/LandingCredits.astro,**/index.astro,**/global.css,**/landing-fit.ts,**/tokens.css,**/design-frame.ts
 ---
 
 # Landing credits (하단 크레딧)

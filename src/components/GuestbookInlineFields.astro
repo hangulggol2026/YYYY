@@ -1,0 +1,63 @@
+---
+import fontsData from '../../data/fonts.json';
+
+interface Props {
+  guestbookLabel: string;
+}
+
+const { guestbookLabel } = Astro.props;
+const fonts = fontsData.fonts;
+---
+
+<form class="main-desktop-guestbook__form" data-guestbook-form>
+  <div class="main-desktop-guestbook__picker guestbook-font-picker" data-guestbook-font-picker>
+    <input type="hidden" name="fontId" value="" data-guestbook-font />
+    <span class="visually-hidden" data-guestbook-font-label-text></span>
+    <button
+      type="button"
+      class="main-desktop-guestbook__trigger guestbook-font-picker__trigger"
+      data-guestbook-font-trigger
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="guestbook-font-listbox-desktop"
+    >
+      <span class="main-desktop-guestbook__trigger-label">{guestbookLabel}</span>
+      <span class="guestbook-font-picker__chevron main-desktop-guestbook__chevron" aria-hidden="true"></span>
+    </button>
+    <ul
+      id="guestbook-font-listbox-desktop"
+      class="guestbook-font-picker__list main-desktop-guestbook__list"
+      role="listbox"
+      tabindex="-1"
+      hidden
+      data-guestbook-font-list
+    >
+      {
+        fonts.map((font) => (
+          <li
+            class="guestbook-font-picker__option"
+            role="option"
+            data-font-id={font.id}
+            aria-selected="false"
+          >
+            <button type="button" class="guestbook-font-picker__option-btn">
+              {font.name}
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <textarea
+    class="main-desktop-guestbook__input"
+    name="message"
+    data-guestbook-message
+    rows="6"
+    placeholder="글꼴을 선택하고 방명을 남겨주세요."
+    required
+    maxlength="500"
+  />
+
+  <button type="submit" class="visually-hidden">작성 완료</button>
+</form>

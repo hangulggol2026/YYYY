@@ -1,0 +1,47 @@
+---
+import FontListItem from './FontListItem.astro';
+import GuestbookInlineFields from './GuestbookInlineFields.astro';
+import fontsData from '../../data/fonts.json';
+import exhibition from '../../data/exhibition.json';
+
+const base = import.meta.env.BASE_URL;
+const introLines =
+  (exhibition as { introLines?: string[] }).introLines ?? exhibition.introParagraphs;
+const introText = introLines.join('\n');
+---
+
+<div class="main-desktop" data-main-desktop>
+  <div class="main-desktop-viewport">
+    <div class="main-desktop-scaler">
+      <div class="main-desktop__canvas">
+        <aside class="main-desktop__left" aria-label="전시 소개 및 방명록">
+          <div class="main-desktop__header">
+            <img
+              src={`${base}assets/header_white.svg`}
+              alt="옆의 옆의 옆의 옆에"
+              width="560"
+              height="96"
+              decoding="async"
+            />
+          </div>
+
+          <div class="main-desktop-guestbook" data-guestbook-desktop-inline>
+            <GuestbookInlineFields guestbookLabel={exhibition.guestbook.label} />
+          </div>
+
+          <p class="main-desktop__intro">{introText}</p>
+        </aside>
+
+        <div class="main-desktop__right">
+          <div class="main-desktop__list main-list" data-main-desktop-list>
+            {
+              fontsData.fonts.map((font) => (
+                <FontListItem font={font} previewPhrase={exhibition.previewPhrase} />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -16,6 +16,7 @@ const BODY_HEADER_STATIC_CLASS = 'guestbook-open--header-static';
 const SCROLL_TOP_PX = 8;
 const MOTION_MS = 900;
 const DEFAULT_GUESTBOOK_PLACEHOLDER = '방명을 남겨 주세요.';
+const DESKTOP_INLINE_PLACEHOLDER = '글꼴을 선택하고 방명을 남겨주세요.';
 
 /** e.g. 서풍 → 서풍으로 / 놀이 → 놀이로 */
 function guestbookPlaceholderForFont(fontName: string): string {
@@ -84,7 +85,126 @@ function defaultFontId(): string {
   return 'seopung';
 }
 
+function initDesktopInlineGuestbook(root: HTMLElement) {
+  const form = root.querySelector<HTMLFormElement>('[data-guestbook-form]');
+  const fontInput = root.querySelector<HTMLInputElement>('[data-guestbook-font]');
+  const fontPicker = root.querySelector<HTMLElement>('[data-guestbook-font-picker]');
+  const fontTrigger = root.querySelector<HTMLButtonElement>('[data-guestbook-font-trigger]');
+  const fontList = root.querySelector<HTMLElement>('[data-guestbook-font-list]');
+  const fontLabelText = root.querySelector<HTMLElement>('[data-guestbook-font-label-text]');
+  const messageInput = root.querySelector<HTMLTextAreaElement>('[data-guestbook-message]');
+  if (
+    !form ||
+    !fontInput ||
+    !fontPicker ||
+    !fontTrigger ||
+    !fontList ||
+    !fontLabelText ||
+    !messageInput
+  ) {
+    return;
+  }
+
+  const closeFontPicker = () => {
+    fontPicker.classList.remove(PICKER_OPEN_CLASS);
+    fontTrigger.setAttribute('aria-expanded', 'false');
+    fontList.hidden = true;
+  };
+
+  const applyGuestbookMessageFont = (fontId: string) => {
+    const family = exhibitionFontFamily(fontId);
+    if (family) messageInput.style.setProperty('font-family', family);
+    else messageInput.style.removeProperty('font-family');
+  };
+
+  const syncMessagePlaceholder = () => {
+    if (!fontInput.value.trim()) {
+      messageInput.placeholder = DESKTOP_INLINE_PLACEHOLDER;
+      return;
+    }
+    const name = fontLabelText.textContent?.trim() ?? '';
+    messageInput.placeholder = name
+      ? guestbookPlaceholderForFont(name)
+      : DESKTOP_INLINE_PLACEHOLDER;
+  };
+
+  const setFontId = (fontId: string, label: string) => {
+    fontInput.value = fontId;
+    fontLabelText.textContent = label;
+    fontList.querySelectorAll<HTMLElement>('[role="option"]').forEach((option) => {
+      option.setAttribute('aria-selected', option.dataset.fontId === fontId ? 'true' : 'false');
+    });
+    if (fontId) applyGuestbookMessageFont(fontId);
+    else messageInput.style.removeProperty('font-family');
+    syncMessagePlaceholder();
+  };
+
+  const toggleFontPicker = () => {
+    if (fontPicker.classList.contains(PICKER_OPEN_CLASS)) closeFontPicker();
+    else {
+      fontPicker.classList.add(PICKER_OPEN_CLASS);
+      fontTrigger.setAttribute('aria-expanded', 'true');
+      fontList.hidden = false;
+    }
+  };
+
+  messageInput.style.removeProperty('font-family');
+  syncMessagePlaceholder();
+  closeFontPicker();
+
+  fontTrigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleFontPicker();
+  });
+
+  fontList.querySelectorAll<HTMLButtonElement>('.guestbook-font-picker__option-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const pick = btn.closest<HTMLElement>('[data-font-id]');
+      const fontId = pick?.dataset.fontId;
+      if (!fontId) return;
+      setFontId(fontId, btn.textContent?.trim() ?? fontId);
+      closeFontPicker();
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!fontPicker.classList.contains(PICKER_OPEN_CLASS)) return;
+    if (e.target instanceof Element && fontPicker.contains(e.target)) return;
+    closeFontPicker();
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fontId = fontInput.value.trim();
+    const text = messageInput.value.trim();
+    if (!fontId) {
+      window.alert('서체를 선택해 주세요.');
+      toggleFontPicker();
+      return;
+    }
+    if (!text) return;
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    submitBtn?.setAttribute('disabled', 'true');
+    void appendGuestbookEntry({ fontId, text })
+      .then(() => {
+        messageInput.value = '';
+        window.location.assign(sitePath('guestbook/'));
+      })
+      .catch(() => {
+        submitBtn?.removeAttribute('disabled');
+        window.alert('방명을 저장하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.');
+      });
+  });
+}
+
 function initGuestbook() {
+  const desktopRoot = document.querySelector<HTMLElement>('[data-guestbook-desktop-inline]');
+  if (document.documentElement.dataset.viewport === 'web' && desktopRoot) {
+    initDesktopInlineGuestbook(desktopRoot);
+    return;
+  }
+
   const panel = document.querySelector<HTMLElement>('[data-guestbook-panel]');
   const form = document.querySelector<HTMLFormElement>('[data-guestbook-form]');
   const fontInput = document.querySelector<HTMLInputElement>('[data-guestbook-font]');

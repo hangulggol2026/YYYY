@@ -6,94 +6,74 @@ interface Props {
 }
 
 const { base } = Astro.props;
-const introParagraphs = exhibition.introParagraphs;
+const introLines =
+  (exhibition as { introLines?: string[] }).introLines ?? exhibition.introParagraphs;
 const participantLines =
   (exhibition as { participantLines?: string[] }).participantLines ??
   [exhibition.participants.join(' ')];
-const scheduleLines =
-  (exhibition as { eventScheduleLines?: string[] }).eventScheduleLines ?? [];
-const eventVenue = (exhibition as { eventVenue?: string }).eventVenue ?? '';
+const introText = introLines.join('\n');
 ---
 
-<section class="landing-desktop" aria-label="전시 소개">
-  <div class="landing-desktop__inner">
-    <header class="landing-desktop__mast">
-      <img
-        class="landing-desktop__wordmark"
-        src={`${base}assets/header_white.svg`}
-        alt="옆의 옆의 옆의 옆에"
-        width="887"
-        height="153"
-        decoding="async"
-      />
-      <p class="landing-desktop__tag">2026 한글꼴연구회 가을전</p>
-    </header>
-
-    <div class="landing-desktop__grid">
-      <div class="landing-desktop__prose">
-        {
-          introParagraphs.map((para) => (
-            <p class="landing-desktop__para">{para}</p>
-          ))
-        }
+<div
+  class="landing-desktop-viewport"
+  data-landing-desktop-interaction
+  role="button"
+  tabindex="0"
+  aria-label="전시 목록으로 열기"
+>
+  <div class="landing-desktop-scaler">
+    <div class="landing-desktop__canvas" data-landing-desktop>
+      <div class="landing-desktop__panel landing-desktop__panel--left" data-landing-desktop-left>
+        <p class="landing-desktop__mast">
+          한글꼴연구회 가을전
+          <br />
+          《옆의 옆의 옆의 옆에》
+        </p>
+        <p class="landing-desktop__intro">{introText}</p>
       </div>
 
-      <aside class="landing-desktop__aside">
-        <dl class="landing-desktop__meta">
-          {
-            scheduleLines.length > 0 && (
-              <div class="landing-desktop__meta-row">
-                <dt>일시</dt>
-                <dd>
-                  {scheduleLines.map((line) => (
-                    <span class="landing-desktop__meta-line">{line}</span>
-                  ))}
-                </dd>
-              </div>
-            )
-          }
-          {eventVenue && (
-            <div class="landing-desktop__meta-row">
-              <dt>장소</dt>
-              <dd>{eventVenue}</dd>
-            </div>
-          )}
-          <div class="landing-desktop__meta-row">
-            <dt>참여</dt>
-            <dd>
-              {participantLines.map((line) => (
-                <span class="landing-desktop__meta-line">{line}</span>
-              ))}
-            </dd>
-          </div>
-          <div class="landing-desktop__meta-row">
-            <dt>협업</dt>
-            <dd>{exhibition.collaboration}</dd>
-          </div>
-          <div class="landing-desktop__meta-row landing-desktop__meta-row--web">
-            <dt>웹</dt>
-            <dd class="landing-desktop__web-row">
-              <span>{exhibition.web}</span>
-              <span class="landing-desktop__logos landing-desktop__logos--inline">
-                <img src={`${base}assets/AGTI.svg`} alt="AGTI" class="landing-desktop__logo-agti" />
-                <img
-                  src={`${base}assets/hangulggol_white.svg`}
-                  alt="한글꼴연구회"
-                  class="landing-desktop__logo-hangul"
-                />
-              </span>
-            </dd>
-          </div>
-        </dl>
+      <div
+        class="landing-desktop__partition"
+        data-landing-desktop-partition
+        aria-hidden="true"
+      ></div>
 
-        <button
-          type="button"
-          class="landing-desktop__enter"
-          data-desktop-enter
-        >
-          전시 목록으로
-        </button>
-      </aside>
+      <div class="landing-desktop__panel landing-desktop__panel--right" data-landing-desktop-right>
+        <img
+          class="landing-desktop__wordmark"
+          src={`${base}assets/header_white.svg`}
+          alt="옆의 옆의 옆의 옆에"
+          width="1165"
+          height="200"
+          decoding="async"
+        />
+        <span class="landing-desktop__label landing-desktop__label--1">참여</span>
+        {
+          participantLines.map((line, i) => (
+            <span class={`landing-desktop__value landing-desktop__value--p${i + 1}`}>{line}</span>
+          ))
+        }
+        <span class="landing-desktop__label landing-desktop__label--2">협업</span>
+        <span class="landing-desktop__value landing-desktop__value--collab">{exhibition.collaboration}</span>
+        <span class="landing-desktop__label landing-desktop__label--3">웹</span>
+        <span class="landing-desktop__value landing-desktop__value--web">{exhibition.web}</span>
+        <img
+          class="landing-desktop__logo landing-desktop__logo--agti"
+          src={`${base}assets/AGTI.svg`}
+          alt="AGTI"
+          width="54"
+          height="20"
+          decoding="async"
+        />
+        <img
+          class="landing-desktop__logo landing-desktop__logo--hangul"
+          src={`${base}assets/hangulggol_white.svg`}
+          alt="한글꼴연구회"
+          width="48"
+          height="19"
+          decoding="async"
+        />
+      </div>
     </div>
   </div>
-</section>
+</div>

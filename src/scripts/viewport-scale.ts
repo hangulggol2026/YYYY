@@ -1,4 +1,12 @@
-import { DEVICE_REF_W, FRAME_H, FRAME_W } from '../lib/design-frame';
+import {
+  DESKTOP_LANDING_H,
+  DESKTOP_LANDING_W,
+  DEVICE_REF_W,
+  FRAME_H,
+  FRAME_W,
+  WEB_FRAME_W,
+} from '../lib/design-frame';
+import { DESKTOP_LAYOUT_MQ, readViewportProfile } from '../lib/viewport-profile';
 
 /** Sync --vb / --vbh / visualViewport vars; --vf comes from CSS (length), not unitless JS. */
 export { DEVICE_REF_W, FRAME_H, FRAME_W };
@@ -28,7 +36,9 @@ export function exhibitionFitMode(w: number): 'width' | 'contain' {
 }
 
 export function applyViewportScale(root: HTMLElement, w: number, h: number, offsetTop: number, offsetLeft: number) {
-  const vb = Math.min(w, FRAME_W);
+  const profile = readViewportProfile();
+  const exhibitionFrameW = profile === 'web' ? WEB_FRAME_W : FRAME_W;
+  const vb = Math.min(w, exhibitionFrameW);
   const vbh = Math.min(h, FRAME_H);
   const landingScale = computeLandingScale(w, h);
 
@@ -41,7 +51,11 @@ export function applyViewportScale(root: HTMLElement, w: number, h: number, offs
   root.style.setProperty('--vv-height', `${h}px`);
   root.dataset.landingFit = landingFitMode(w);
   root.dataset.exhibitionFit = exhibitionFitMode(w);
-  root.dataset.viewport = w >= 1280 ? 'web' : 'mobile';
+  root.dataset.viewport = profile;
+
+  const desktopLandingScale =
+    profile === 'web' ? Math.min(w / DESKTOP_LANDING_W, h / DESKTOP_LANDING_H) : 1;
+  root.style.setProperty('--desktop-landing-scale', String(desktopLandingScale));
 }
 
 export function syncViewportScale() {
@@ -59,6 +73,7 @@ function init() {
   window.addEventListener('orientationchange', onViewportChange);
   window.visualViewport?.addEventListener('resize', onViewportChange);
   window.visualViewport?.addEventListener('scroll', onViewportChange);
+  window.matchMedia(DESKTOP_LAYOUT_MQ).addEventListener('change', onViewportChange);
 }
 
 init();
