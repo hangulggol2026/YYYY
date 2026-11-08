@@ -16,6 +16,8 @@ const {
   description,
 } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const fontFaceCss = exhibitionFontFaceCss(base);
+const fontFaceCssWebKit = exhibitionFontFaceCss(base, { compactForWebKit: true });
 ---
 
 <!doctype html>
@@ -29,7 +31,23 @@ const base = import.meta.env.BASE_URL;
     <link rel="icon" href={`${base}favicon.png`} type="image/png" />
     <SiteMeta title={title} description={description} />
     <title>{title}</title>
-    <style is:global set:html={exhibitionFontFaceCss(base)} />
+    <style is:global id="exhibition-font-faces" set:html={fontFaceCss} />
+    <style is:global media="not all" id="exhibition-font-faces-webkit" set:html={fontFaceCssWebKit} />
+    <script is:inline>
+      (function () {
+        var ua = navigator.userAgent;
+        var isWebKit =
+          /iPhone|iPad|iPod/i.test(ua) ||
+          (/Safari/i.test(ua) &&
+            !/Chrome|Chromium|CriOS|Edg|EdgiOS|OPR|FxiOS|Android/i.test(ua));
+        if (isWebKit) {
+          var compact = document.getElementById('exhibition-font-faces-webkit');
+          var full = document.getElementById('exhibition-font-faces');
+          if (compact) compact.media = 'all';
+          if (full) full.remove();
+        }
+      })();
+    </script>
     <script is:inline>
       (function () {
         var FRAME_W = 1277;

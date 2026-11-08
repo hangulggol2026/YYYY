@@ -111,8 +111,15 @@ function parseUnicodeRangeList(css: string): Array<[number, number]> {
 }
 
 function formatCodepoint(cp: number): string {
-  return `U+${cp.toString(16).toUpperCase()}`;
+  return `U+${cp.toString(16).toUpperCase().padStart(4, '0')}`;
 }
+
+export type ExhibitionFontFaceCssOptions = {
+  /**
+   * Safari / WebKit: skip unicode-range splitting + blank twin faces (glyph matching + long ranges).
+   */
+  compactForWebKit?: boolean;
+};
 
 /** Blank fallback face must not overlap primary unicode-range (WebKit textarea doubles glyphs otherwise). */
 function complementUnicodeRange(primaryCss: string | undefined): string | null {
@@ -177,7 +184,8 @@ export function exhibitionFontFamily(fontId: string): string | null {
 }
 
 /** @font-face blocks + detail / list / guestbook preview bindings. */
-export function exhibitionFontFaceCss(baseUrl: string): string {
+export function exhibitionFontFaceCss(baseUrl: string, options: ExhibitionFontFaceCssOptions = {}): string {
+  const compact = options.compactForWebKit === true;
   const faces: string[] = [];
   const apply: string[] = [];
 
@@ -196,7 +204,7 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
     for (const face of entry.files) {
       const url = `${baseUrl}fonts/exhibition/${face.file}`;
       const unicodeRange = EXHIBITION_FACE_UNICODE_RANGES[face.file];
-      const rangeLine = unicodeRange ? `\n  unicode-range: ${unicodeRange};` : '';
+      const rangeLine = !compact && unicodeRange ? `\n  unicode-range: ${unicodeRange};` : '';
       faces.push(`@font-face {
   font-family: '${entry.family}';
   src: url('${url}') format('woff2');
@@ -204,15 +212,17 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
   font-style: normal;
   font-display: block;${rangeLine}
 }`);
-      const blankRange = complementUnicodeRange(unicodeRange);
-      const blankRangeLine = blankRange ? `\n  unicode-range: ${blankRange};` : '';
-      faces.push(`@font-face {
+      if (!compact) {
+        const blankRange = complementUnicodeRange(unicodeRange);
+        const blankRangeLine = blankRange ? `\n  unicode-range: ${blankRange};` : '';
+        faces.push(`@font-face {
   font-family: '${entry.family}';
   src: url('${blankUrl}') format('woff2');
   font-weight: ${face.weight};
   font-style: normal;
   font-display: block;${blankRangeLine}
 }`);
+      }
     }
 
     const family = exhibitionFontFamily(id)!;

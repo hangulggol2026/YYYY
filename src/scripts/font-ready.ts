@@ -5,6 +5,8 @@ import {
 } from '../lib/exhibition-fonts';
 
 const READY_CLASS = 'fonts-ready';
+const FONT_LOAD_TIMEOUT_MS = 10_000;
+const PER_FACE_TIMEOUT_MS = 4_000;
 
 function pageFontIds(): string[] {
   const body = document.body;
@@ -41,10 +43,19 @@ function descriptorsForPage() {
   );
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | undefined> {
+  return Promise.race([
+    promise,
+    new Promise<undefined>((resolve) => {
+      window.setTimeout(() => resolve(undefined), ms);
+    }),
+  ]);
+}
+
 async function loadOne(family: string, weight: number) {
   const spec = `${weight} 48px "${family}"`;
   try {
-    await document.fonts.load(spec);
+    await withTimeout(document.fonts.load(spec), PER_FACE_TIMEOUT_MS);
   } catch {
     /* continue */
   }
@@ -57,21 +68,24 @@ async function loadExhibitionFonts() {
     return;
   }
 
-  const descriptors = descriptorsForPage();
-  const blankDescriptors = descriptors.filter((d) => d.family === EXHIBITION_BLANK_FAMILY);
-  const faceDescriptors = descriptors.filter((d) => d.family !== EXHIBITION_BLANK_FAMILY);
+  try {
+    const descriptors = descriptorsForPage();
+    const blankDescriptors = descriptors.filter((d) => d.family === EXHIBITION_BLANK_FAMILY);
+    const faceDescriptors = descriptors.filter((d) => d.family !== EXHIBITION_BLANK_FAMILY);
 
-  for (const { family, weight } of blankDescriptors) {
-    await loadOne(family, weight);
+    for (const { family, weight } of blankDescriptors) {
+      await loadOne(family, weight);
+    }
+
+    // Sequential for heavy faces (avoids decoding 여러 거대 CFF at once)
+    for (const { family, weight } of faceDescriptors) {
+      await loadOne(family, weight);
+    }
+
+    await withTimeout(document.fonts.ready, FONT_LOAD_TIMEOUT_MS);
+  } finally {
+    document.documentElement.classList.add(READY_CLASS);
   }
-
-  // Sequential for heavy faces (avoids decoding 여러 거대 CFF at once)
-  for (const { family, weight } of faceDescriptors) {
-    await loadOne(family, weight);
-  }
-
-  await document.fonts.ready;
-  document.documentElement.classList.add(READY_CLASS);
 }
 
 void loadExhibitionFonts();
