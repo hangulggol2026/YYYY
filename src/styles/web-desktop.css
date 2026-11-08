@@ -59,6 +59,7 @@
   --dl-line-box: calc(var(--dl-type) * var(--dl-line));
   /* Figma 25:3 — 방명록 트리거·입력 UI */
   --dl-ui-type: 20px;
+  --dm-guestbook-input-type: calc(var(--dl-ui-type) * 1.5);
   --dl-ui-line: 1.65;
   --dl-scrollbar-size: var(--ex-scrollbar-size);
   --dl-scrollbar-thumb: var(--ex-scrollbar-thumb);
@@ -71,8 +72,16 @@
   --dl-credits-value-x: 169px;
   --dl-credits-participate-top: 832px;
   --dl-credits-row-step: 41px;
-  --dl-credits-collab-top: 1017px;
-  --dl-credits-web-top: 1119px;
+  /* 우측 캡션 8줄의 마지막 줄 박스. 참여 마지막 줄과 그 웹 줄의 한가운데에 협업 */
+  --dl-credits-caption-lines: 8;
+  --dl-credits-web-top: calc(
+    var(--dl-intro-right-top) + (var(--dl-credits-caption-lines) - 1) * var(--dl-line-box)
+  );
+  --dl-credits-collab-top: calc(
+    (
+      var(--dl-credits-participate-top) + 2 * var(--dl-credits-row-step) + var(--dl-credits-web-top)
+    ) / 2
+  );
   --dl-intro-right-x: 62px;
   --dl-intro-right-top: 832px;
   --dl-intro-right-w: 903px;
@@ -760,7 +769,7 @@
   background: transparent;
   color: #fff;
   font-family: 'ExhibitionBlank';
-  font-size: var(--dl-ui-type);
+  font-size: var(--dm-guestbook-input-type);
   font-synthesis: none;
   line-height: var(--dl-ui-line);
   resize: none;
@@ -782,7 +791,7 @@
 [data-viewport='web'] .main-desktop-guestbook__input::placeholder {
   color: rgba(255, 255, 255, 0.65);
   font-family: var(--font-ui);
-  font-size: var(--dl-ui-type);
+  font-size: var(--dm-guestbook-input-type);
   line-height: var(--dl-ui-line);
 }
 
