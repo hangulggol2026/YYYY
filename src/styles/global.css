@@ -194,6 +194,8 @@ html[data-debug-grid] .layout-frame {
 /* Hide exhibition type until woff2 faces are ready (no system-font flash). */
 html:not(.fonts-ready) .specimen-text,
 html:not(.fonts-ready) .detail-hero__title,
+html:not(.fonts-ready) .detail-desktop__title,
+html:not(.fonts-ready) .detail-desktop__specimen,
 html:not(.fonts-ready) .font-list-item__preview,
 html:not(.fonts-ready) .guestbook-panel__input {
   color: transparent !important;
@@ -208,6 +210,8 @@ html:not(.fonts-ready)
 
 html.fonts-ready .specimen-text,
 html.fonts-ready .detail-hero__title,
+html.fonts-ready .detail-desktop__title,
+html.fonts-ready .detail-desktop__specimen,
 html.fonts-ready .font-list-item__preview {
   transition: color 0.15s ease;
 }
@@ -1385,6 +1389,13 @@ body.page-font-yawp .detail-hero__byline {
   row-gap: var(--detail-slider-gap);
 }
 
+.detail-typo-controls__weights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(16 * var(--vf));
+  margin-top: var(--detail-slider-gap);
+}
+
 .detail-weight-btn {
   box-sizing: border-box;
   width: 100%;
@@ -1484,6 +1495,30 @@ body.page-font-yawp .detail-hero__byline {
   white-space: nowrap;
 }
 
+.typo-slider-row__track {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 var(--detail-slider-value-to-track);
+}
+
+.typo-slider-row__track input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  width: 100%;
+  height: var(--detail-slider-track-height);
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  touch-action: pan-x;
+}
+
 .typo-slider-row input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
@@ -1528,6 +1563,38 @@ body.page-font-yawp .detail-hero__byline {
   background: var(--color-text-on-light);
   border: none;
   border-radius: 0;
+}
+
+/* Detail typo sliders on black — Figma white track + center tick (desktop shares via iconTone=white) */
+.detail-typo-controls--on-dark .typo-slider-row__value {
+  color: var(--color-text-on-dark);
+}
+
+.detail-typo-controls--on-dark .typo-slider-row__track input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  background: #fff;
+}
+
+.detail-typo-controls--on-dark .typo-slider-row__track input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--detail-on-dark-thumb-w, var(--detail-slider-thumb-w));
+  height: var(--detail-slider-thumb-h);
+  margin-top: calc((2px - var(--detail-slider-thumb-h)) / 2);
+  border-radius: 0;
+  background: #fff;
+}
+
+.detail-typo-controls--on-dark .typo-slider-row__track input[type='range']::-moz-range-track {
+  height: 2px;
+  background: #fff;
+}
+
+.detail-typo-controls--on-dark .typo-slider-row__track input[type='range']::-moz-range-thumb {
+  width: var(--detail-on-dark-thumb-w, var(--detail-slider-thumb-w));
+  height: var(--detail-slider-thumb-h);
+  border: none;
+  border-radius: 0;
+  background: #fff;
 }
 
 .detail-specimen {
@@ -1607,7 +1674,7 @@ body.page-detail.specimen-editing .guestbook-sticky {
 [data-specimen-scope] {
   --specimen-size: var(--detail-specimen-default-size);
   --specimen-letter-spacing: 0em;
-  --specimen-line-height: 1.625;
+  --specimen-line-height: var(--specimen-leading-base, 1.625);
   --specimen-font-weight: 400;
 }
 
@@ -1617,6 +1684,11 @@ body.page-detail.specimen-editing .guestbook-sticky {
   border: none;
   resize: none;
   padding: 0;
+  padding-top: calc(
+    0px -
+      (var(--specimen-line-height, var(--specimen-leading-base, 1.625)) - var(--specimen-leading-base, 1.625)) *
+      var(--specimen-size, var(--detail-specimen-default-size)) * 0.5
+  );
   font-family: var(--font-specimen);
   font-size: var(--specimen-size);
   font-weight: var(--specimen-font-weight, 400);
@@ -1627,6 +1699,14 @@ body.page-detail.specimen-editing .guestbook-sticky {
   font-synthesis: none;
   -webkit-appearance: none;
   appearance: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.detail-specimen textarea:focus,
+.detail-specimen textarea:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 /* iOS: inputs under 16px trigger zoom + broken viewport (looks like a white clipped box) */

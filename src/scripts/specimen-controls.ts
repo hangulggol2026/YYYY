@@ -5,14 +5,33 @@ const SPECIMEN_EDIT_CLASS = 'specimen-editing';
 
 type SpecimenWeight = 400 | 500;
 
-function applyVars(scope: HTMLElement, size: number, tracking: number, leading: number) {
-  scope.style.setProperty('--specimen-size', `${size}px`);
-  scope.style.setProperty('--specimen-letter-spacing', `${tracking / 100}em`);
-  scope.style.setProperty('--specimen-line-height', `${leading / 100}`);
+function setSpecimenVars(
+  target: HTMLElement,
+  size: number,
+  tracking: number,
+  leading: number,
+  weight?: SpecimenWeight,
+) {
+  target.style.setProperty('--specimen-size', `${size}px`);
+  target.style.setProperty('--specimen-letter-spacing', `${tracking / 100}em`);
+  target.style.setProperty('--specimen-line-height', `${leading / 100}`);
+  if (weight != null) {
+    target.style.setProperty('--specimen-font-weight', String(weight));
+  }
+}
+
+function applyVars(scope: HTMLElement, size: number, tracking: number, leading: number, weight: SpecimenWeight) {
+  setSpecimenVars(scope, size, tracking, leading, weight);
+  const textarea = scope.querySelector<HTMLElement>('[data-specimen-input]');
+  if (textarea && textarea !== scope) {
+    setSpecimenVars(textarea, size, tracking, leading, weight);
+  }
 }
 
 function applyWeight(scope: HTMLElement, weight: SpecimenWeight) {
   scope.style.setProperty('--specimen-font-weight', String(weight));
+  const textarea = scope.querySelector<HTMLElement>('[data-specimen-input]');
+  textarea?.style.setProperty('--specimen-font-weight', String(weight));
 }
 
 function resetSlidersToDefault(controls: ParentNode) {
@@ -86,10 +105,17 @@ function bindSpecimenMobileEditing(textarea: HTMLTextAreaElement) {
   });
 }
 
+function specimenRoot(): ParentNode | null {
+  const isWeb = document.documentElement.dataset.viewport === 'web';
+  if (isWeb) return document.querySelector('[data-detail-desktop]');
+  return document.querySelector('.detail-page--mobile');
+}
+
 function init() {
-  const textarea = document.querySelector<HTMLTextAreaElement>('[data-specimen-input]');
-  const controls = document.querySelector('[data-specimen-controls]');
-  const scope = document.querySelector<HTMLElement>('[data-specimen-scope]');
+  const root = specimenRoot();
+  const textarea = root?.querySelector<HTMLTextAreaElement>('[data-specimen-input]');
+  const controls = root?.querySelector('[data-specimen-controls]');
+  const scope = root?.querySelector<HTMLElement>('[data-specimen-scope]');
   if (!textarea || !controls || !scope) return;
 
   const fontId = textarea.dataset.fontId ?? 'default';
@@ -98,17 +124,17 @@ function init() {
   const sizeInput = controls.querySelector<HTMLInputElement>('[data-slider="size"]');
   const trackingInput = controls.querySelector<HTMLInputElement>('[data-slider="tracking"]');
   const leadingInput = controls.querySelector<HTMLInputElement>('[data-slider="leading"]');
-  const weightButtons = document.querySelectorAll<HTMLButtonElement>('[data-specimen-weight]');
+  const weightButtons = root.querySelectorAll<HTMLButtonElement>('[data-specimen-weight]');
 
   resetSlidersToDefault(controls);
 
   let activeWeight: SpecimenWeight = 400;
+  textarea.value = textarea.defaultValue;
 
   const saved = localStorage.getItem(storageKey);
   if (saved) {
     try {
-      const data = JSON.parse(saved) as { text?: string; weight?: number };
-      if (data.text) textarea.value = data.text;
+      const data = JSON.parse(saved) as { weight?: number };
       if (data.weight === 400 || data.weight === 500) activeWeight = data.weight;
     } catch {
       /* ignore */
@@ -116,13 +142,8 @@ function init() {
   }
 
   const persist = () => {
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify({
-        text: textarea.value,
-        ...(weightButtons.length ? { weight: activeWeight } : {}),
-      }),
-    );
+    if (!weightButtons.length) return;
+    localStorage.setItem(storageKey, JSON.stringify({ weight: activeWeight }));
   };
 
   const syncWeightButtons = () => {
@@ -149,18 +170,19 @@ function init() {
     const size = sizeInput ? Number(sizeInput.value) : 52;
     const tracking = trackingInput ? Number(trackingInput.value) : 0;
     const leading = leadingInput ? Number(leadingInput.value) : 185;
-    applyVars(scope, size, tracking, leading);
-    applyWeight(scope, activeWeight);
+    applyVars(scope, size, tracking, leading, activeWeight);
     syncSliderReadouts(size, tracking, leading);
   };
 
   sizeInput?.addEventListener('input', update);
   trackingInput?.addEventListener('input', update);
   leadingInput?.addEventListener('input', update);
+  sizeInput?.addEventListener('change', update);
+  trackingInput?.addEventListener('change', update);
+  leadingInput?.addEventListener('change', update);
   [sizeInput, trackingInput, leadingInput].forEach((input) => {
     if (input) bindSliderPointerDrag(input, update);
   });
-  textarea.addEventListener('input', persist);
   bindSpecimenMobileEditing(textarea);
 
   weightButtons.forEach((btn) => {
@@ -177,11 +199,10 @@ function init() {
   syncWeightButtons();
   update();
 
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-      resetSlidersToDefault(controls);
-      update();
-    }
+  window.addEventListener('pageshow', () => {
+    textarea.value = textarea.defaultValue;
+    resetSlidersToDefault(controls);
+    update();
   });
 }
 

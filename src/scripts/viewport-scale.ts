@@ -66,6 +66,7 @@ export function applyViewportScale(root: HTMLElement, w: number, h: number, offs
   const desktopCanvasScale = computeDesktopCanvasScale(w, h, profile);
   root.style.setProperty('--desktop-landing-scale', String(desktopCanvasScale));
   root.style.setProperty('--desktop-main-scale', String(desktopCanvasScale));
+  root.dispatchEvent(new Event('desktop-viewport-scale'));
 }
 
 export function syncViewportScale() {

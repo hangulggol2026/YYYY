@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GuestbookSticky from '../../components/GuestbookSticky.astro';
 import LayoutGrid from '../../components/LayoutGrid.astro';
+import DetailDesktop from '../../components/DetailDesktop.astro';
+import DetailTypoControls from '../../components/DetailTypoControls.astro';
 import fontsData from '../../../data/fonts.json';
 import exhibition from '../../../data/exhibition.json';
 
@@ -26,148 +28,75 @@ const base = import.meta.env.BASE_URL;
   description={`${font.name} — ${font.designer}. ${font.caption}`}
   bodyClass={`page-detail page-font-${font.id}`}
 >
-  <div class="detail-page">
-  <LayoutGrid bleed dark class="detail-hero">
-    <div class="span-8 detail-hero__top">
-      <a href={`${base}?enter=main`} class="detail-back" aria-label="목록으로">
-        <span class="detail-back__chevron" aria-hidden="true"></span>
-      </a>
-      <div class="detail-hero__headline">
-        <h1 class="detail-hero__title">{font.name}</h1>
-        <span class="detail-hero__byline">
-          <span class="detail-hero__designer">{font.designer}</span>{' '}<a
-            class="detail-hero__instagram"
-            href={`https://www.instagram.com/${font.instagram}/`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @{font.instagram}
-          </a>
-        </span>
-        <p class="detail-hero__caption">{font.caption}</p>
-      </div>
-    </div>
-  </LayoutGrid>
+  <DetailDesktop
+    base={base}
+    font={font}
+    specimenDefault={specimenDefault}
+    leadingMin={leadingMin}
+    leadingMax={leadingMax}
+    defaultLeading={defaultLeading}
+  />
 
-  <LayoutGrid light class="detail-controls">
-    <div class="span-8" data-specimen-controls>
-      <div class="typo-slider-row">
-        <span class="typo-slider-row__label" id="label-size">
-          <img
-            class="typo-slider-row__icon"
-            src={`${base}assets/typo/font-size.svg`}
-            alt=""
-            width="21"
-            height="18"
-            decoding="async"
-            aria-hidden="true"
-          />
-          <span class="visually-hidden">글자 크기</span>
-        </span>
-        <span class="typo-slider-row__value" id="value-size" data-slider-value="size">52px</span>
-        <input
-          id="slider-size"
-          type="range"
-          min="8"
-          max="96"
-          value="52"
-          data-slider="size"
-          aria-labelledby="label-size"
-          aria-describedby="value-size"
-        />
+  <div class="detail-page detail-page--mobile">
+    <LayoutGrid bleed dark class="detail-hero">
+      <div class="span-8 detail-hero__top">
+        <a href={`${base}?enter=main`} class="detail-back" aria-label="목록으로">
+          <span class="detail-back__chevron" aria-hidden="true"></span>
+        </a>
+        <div class="detail-hero__headline">
+          <h1 class="detail-hero__title">{font.name}</h1>
+          <span class="detail-hero__byline">
+            <span class="detail-hero__designer">{font.designer}</span>{' '}
+            <a
+              class="detail-hero__instagram"
+              href={`https://www.instagram.com/${font.instagram}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @{font.instagram}
+            </a>
+          </span>
+          <p class="detail-hero__caption">{font.caption}</p>
+        </div>
       </div>
-      <div class="typo-slider-row">
-        <span class="typo-slider-row__label" id="label-tracking">
-          <img
-            class="typo-slider-row__icon"
-            src={`${base}assets/typo/letter-spacing.svg`}
-            alt=""
-            width="21"
-            height="18"
-            decoding="async"
-            aria-hidden="true"
-          />
-          <span class="visually-hidden">글자 사이</span>
-        </span>
-        <span class="typo-slider-row__value" id="value-tracking" data-slider-value="tracking">0%</span>
-        <input
-          id="slider-tracking"
-          type="range"
-          min="-20"
-          max="20"
-          value="0"
-          data-slider="tracking"
-          aria-labelledby="label-tracking"
-          aria-describedby="value-tracking"
-        />
-      </div>
-      <div class="typo-slider-row">
-        <span class="typo-slider-row__label" id="label-leading">
-          <img
-            class="typo-slider-row__icon"
-            src={`${base}assets/typo/line-height.svg`}
-            alt=""
-            width="25"
-            height="18"
-            decoding="async"
-            aria-hidden="true"
-          />
-          <span class="visually-hidden">글줄 사이</span>
-        </span>
-        <span class="typo-slider-row__value" id="value-leading" data-slider-value="leading"
-          >{`${defaultLeading}%`}</span
-        >
-        <input
-          id="slider-leading"
-          type="range"
-          min={leadingMin}
-          max={leadingMax}
-          value={defaultLeading}
-          data-slider="leading"
-          aria-labelledby="label-leading"
-          aria-describedby="value-leading"
-        />
-      </div>
-    </div>
-    {font.id === 'seopung' && (
-      <>
-        <button
-          type="button"
-          class="col-4 detail-weight-btn is-active"
-          data-specimen-weight="400"
-          aria-pressed="true"
-        >
-          Regular
-        </button>
-        <button
-          type="button"
-          class="col-4 detail-weight-btn"
-          data-specimen-weight="500"
-          aria-pressed="false"
-        >
-          Medium
-        </button>
-      </>
-    )}
-  </LayoutGrid>
+    </LayoutGrid>
 
-  <LayoutGrid light class="detail-specimen">
-    <div class="span-8 detail-specimen__surface" data-specimen-scope>
-      <textarea
-        class="specimen-text"
-        data-specimen-input
-        data-font-id={font.id}
-        data-font-name={font.name}
-        rows="8"
-        autocomplete="off"
-        autocapitalize="sentences"
-        spellcheck="true"
-        aria-label="서체 견본 입력">{specimenDefault}</textarea
+    <LayoutGrid light class="detail-controls">
+      <div class="span-8">
+        <DetailTypoControls
+          base={base}
+          defaultLeading={defaultLeading}
+          leadingMin={leadingMin}
+          leadingMax={leadingMax}
+          showWeights={font.id === 'seopung'}
+          idPrefix="mobile"
+        />
+      </div>
+    </LayoutGrid>
+
+    <LayoutGrid light class="detail-specimen">
+      <div
+        class="span-8 detail-specimen__surface"
+        data-specimen-scope
+        style={`--specimen-leading-base: ${defaultLeading / 100}`}
       >
-    </div>
-  </LayoutGrid>
+        <textarea
+          class="specimen-text"
+          data-specimen-input
+          data-font-id={font.id}
+          data-font-name={font.name}
+          rows="8"
+          autocomplete="off"
+          autocapitalize="sentences"
+          spellcheck="true"
+          aria-label="서체 견본 입력"
+        >{specimenDefault}</textarea
+        >
+      </div>
+    </LayoutGrid>
   </div>
 
   <GuestbookSticky />
   <script src="../../scripts/specimen-controls.ts"></script>
+  <script src="../../scripts/detail-desktop-layout.ts"></script>
 </BaseLayout>

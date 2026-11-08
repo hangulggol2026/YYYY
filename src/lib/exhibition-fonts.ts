@@ -47,6 +47,14 @@ export const EXHIBITION_DETAIL_TITLE_COMP: Partial<Record<string, ExhibitionDeta
     lineHeight: 1,
     padBlock: 'calc(10 * var(--vf))',
   },
+  ilgwasa: {
+    scale: 0.62,
+    lineHeight: 1.05,
+  },
+  gamtu: {
+    scale: 0.72,
+    lineHeight: 1.05,
+  },
 };
 
 /**
@@ -274,6 +282,8 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
 .guestbook-entry .font-list-item__preview,
 .specimen-text,
 .detail-hero__title,
+.detail-desktop__title,
+.detail-desktop__specimen,
 .guestbook-font-picker__option-btn,
 .guestbook-panel__input,
 .main-desktop-guestbook__input,

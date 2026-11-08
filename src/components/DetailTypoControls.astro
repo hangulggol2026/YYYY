@@ -1,0 +1,142 @@
+---
+interface Props {
+  base: string;
+  defaultLeading: number;
+  leadingMin: number;
+  leadingMax: number;
+  showWeights?: boolean;
+  /** Avoid duplicate control ids when mobile + desktop both exist in the DOM. */
+  idPrefix?: string;
+  /** Figma 25:4 desktop — white icons on black panel */
+  iconTone?: 'dark' | 'white';
+}
+
+const {
+  base,
+  defaultLeading,
+  leadingMin,
+  leadingMax,
+  showWeights = false,
+  idPrefix = '',
+  iconTone = 'dark',
+} = Astro.props;
+const pid = (name: string) => (idPrefix ? `${idPrefix}-${name}` : name);
+const icons =
+  iconTone === 'white'
+    ? {
+        size: { file: 'font-size-white.svg', w: 32, h: 27 },
+        tracking: { file: 'letter-spacing-white.svg', w: 32, h: 27 },
+        leading: { file: 'line-height-white.svg', w: 32, h: 23 },
+      }
+    : {
+        size: { file: 'font-size.svg', w: 21, h: 18 },
+        tracking: { file: 'letter-spacing.svg', w: 21, h: 18 },
+        leading: { file: 'line-height.svg', w: 25, h: 18 },
+      };
+---
+
+<div
+  class:list={['detail-typo-controls', iconTone === 'white' && 'detail-typo-controls--on-dark']}
+  data-specimen-controls
+>
+  <div class="typo-slider-row">
+    <span class="typo-slider-row__label" id={pid('label-size')}>
+      <img
+        class="typo-slider-row__icon"
+        src={`${base}assets/typo/${icons.size.file}`}
+        alt=""
+        width={icons.size.w}
+        height={icons.size.h}
+        decoding="async"
+        aria-hidden="true"
+      />
+      <span class="visually-hidden">글자 크기</span>
+    </span>
+    <span class="typo-slider-row__value" id={pid('value-size')} data-slider-value="size">52px</span>
+    <div class="typo-slider-row__track">
+      <input
+        id={pid('slider-size')}
+        type="range"
+        min="8"
+        max="96"
+        value="52"
+        data-slider="size"
+        aria-labelledby={pid('label-size')}
+        aria-describedby={pid('value-size')}
+      />
+    </div>
+  </div>
+  <div class="typo-slider-row">
+    <span class="typo-slider-row__label" id={pid('label-tracking')}>
+      <img
+        class="typo-slider-row__icon"
+        src={`${base}assets/typo/${icons.tracking.file}`}
+        alt=""
+        width={icons.tracking.w}
+        height={icons.tracking.h}
+        decoding="async"
+        aria-hidden="true"
+      />
+      <span class="visually-hidden">글자 사이</span>
+    </span>
+    <span class="typo-slider-row__value" id={pid('value-tracking')} data-slider-value="tracking">0%</span>
+    <div class="typo-slider-row__track">
+      <input
+        id={pid('slider-tracking')}
+        type="range"
+        min="-20"
+        max="20"
+        value="0"
+        data-slider="tracking"
+        aria-labelledby={pid('label-tracking')}
+        aria-describedby={pid('value-tracking')}
+      />
+    </div>
+  </div>
+  <div class="typo-slider-row">
+    <span class="typo-slider-row__label" id={pid('label-leading')}>
+      <img
+        class="typo-slider-row__icon"
+        src={`${base}assets/typo/${icons.leading.file}`}
+        alt=""
+        width={icons.leading.w}
+        height={icons.leading.h}
+        decoding="async"
+        aria-hidden="true"
+      />
+      <span class="visually-hidden">글줄 사이</span>
+    </span>
+    <span class="typo-slider-row__value" id={pid('value-leading')} data-slider-value="leading"
+      >{`${defaultLeading}%`}</span
+    >
+    <div class="typo-slider-row__track">
+      <input
+        id={pid('slider-leading')}
+        type="range"
+        min={leadingMin}
+        max={leadingMax}
+        value={defaultLeading}
+        data-slider="leading"
+        aria-labelledby={pid('label-leading')}
+        aria-describedby={pid('value-leading')}
+      />
+    </div>
+  </div>
+  {
+    showWeights && (
+      <div class="detail-typo-controls__weights">
+        <button
+          type="button"
+          class="detail-weight-btn is-active"
+          data-specimen-weight="400"
+          aria-pressed="true"
+        >
+          Regular
+        </button>
+        <button type="button" class="detail-weight-btn" data-specimen-weight="500" aria-pressed="false">
+          Medium
+        </button>
+      </div>
+    )
+  }
+</div>

@@ -15,5 +15,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
     "astro": "^5.7.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.50.1"
   }
 }

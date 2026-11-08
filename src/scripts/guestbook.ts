@@ -716,4 +716,38 @@ function initGuestbook() {
   });
 }
 
+function initDetailDesktopGuestbookSend() {
+  if (document.documentElement.dataset.viewport !== 'web') return;
+  if (!document.body.classList.contains('page-detail')) return;
+
+  const root = document.querySelector<HTMLElement>('[data-detail-desktop]');
+  const btn = root?.querySelector<HTMLButtonElement>('[data-detail-guestbook-send]');
+  const textarea = root?.querySelector<HTMLTextAreaElement>('[data-specimen-input]');
+  if (!btn || !textarea) return;
+
+  const syncDisabled = () => {
+    btn.disabled = !textarea.value.trim();
+  };
+
+  syncDisabled();
+  textarea.addEventListener('input', syncDisabled);
+
+  btn.addEventListener('click', () => {
+    const fontId = textarea.dataset.fontId?.trim() || defaultFontId();
+    const text = textarea.value.trim();
+    if (!text) return;
+
+    btn.disabled = true;
+    void appendGuestbookEntry({ fontId, text })
+      .then(() => {
+        window.location.assign(sitePath('guestbook/'));
+      })
+      .catch(() => {
+        syncDisabled();
+        window.alert('방명을 저장하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.');
+      });
+  });
+}
+
 initGuestbook();
+initDetailDesktopGuestbookSend();

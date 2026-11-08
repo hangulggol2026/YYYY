@@ -1,0 +1,123 @@
+---
+import DetailTypoControls from './DetailTypoControls.astro';
+import DesktopPartnerLogos from './DesktopPartnerLogos.astro';
+interface Font {
+  id: string;
+  name: string;
+  designer: string;
+  instagram: string;
+  caption: string;
+  specimenLeading?: number;
+}
+
+interface Props {
+  base: string;
+  font: Font;
+  specimenDefault: string;
+  leadingMin: number;
+  leadingMax: number;
+  defaultLeading: number;
+}
+
+const { base, font, specimenDefault, leadingMin, leadingMax, defaultLeading } = Astro.props;
+---
+
+<div class="detail-desktop" data-detail-desktop>
+  <div class="detail-desktop-viewport">
+    <div class="detail-desktop-scaler">
+      <div class="detail-desktop__canvas">
+        <aside class="detail-desktop__left" aria-label={`${font.name} 소개 및 조절`}>
+          <div class="main-desktop__header detail-desktop__header">
+            <img
+              src={`${base}assets/header_white.svg`}
+              alt="옆의 옆의 옆의 옆에"
+              width="560"
+              height="96"
+              decoding="async"
+            />
+          </div>
+
+          <div class="detail-desktop__rule detail-desktop__rule--header" aria-hidden="true"></div>
+
+          <div class="detail-desktop__meta">
+            <div class="detail-desktop__headline">
+              <h1 class="detail-desktop__title">{font.name}</h1>
+              <span class="detail-desktop__byline">
+                <span class="detail-desktop__designer">{font.designer}</span>{' '}
+                <a
+                  class="detail-desktop__instagram"
+                  href={`https://www.instagram.com/${font.instagram}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @{font.instagram}
+                </a>
+              </span>
+            </div>
+            <p class="detail-desktop__caption">{font.caption}</p>
+          </div>
+
+          <div class="detail-desktop__rule detail-desktop__rule--controls" aria-hidden="true"></div>
+
+          <DetailTypoControls
+            base={base}
+            defaultLeading={defaultLeading}
+            leadingMin={leadingMin}
+            leadingMax={leadingMax}
+            showWeights={font.id === 'seopung'}
+            idPrefix="desktop"
+            iconTone="white"
+          />
+
+          <DesktopPartnerLogos base={base} variant="main-left" />
+        </aside>
+
+        <div
+          class="detail-desktop__right"
+          data-specimen-scope
+          style={`--specimen-leading-base: ${defaultLeading / 100}`}
+        >
+          <a
+            href={`${base}?enter=main`}
+            class="detail-back detail-desktop__back detail-desktop__back--specimen"
+            aria-label="목록으로"
+          >
+            <span class="detail-back__chevron" aria-hidden="true"></span>
+          </a>
+          <textarea
+            class="detail-desktop__specimen specimen-text"
+            data-specimen-input
+            data-font-id={font.id}
+            data-font-name={font.name}
+            rows="8"
+            autocomplete="off"
+            autocapitalize="sentences"
+            spellcheck="true"
+            aria-label="서체 견본 입력"
+          >{specimenDefault}</textarea
+          >
+          <button
+            type="button"
+            class="detail-desktop__guestbook-send"
+            data-detail-guestbook-send
+            aria-label="방명록 전송하기"
+          >
+            <span class="detail-desktop__guestbook-send-chevron" aria-hidden="true">
+              <svg
+                class="detail-desktop__guestbook-send-chevron-svg"
+                width="16"
+                height="8"
+                viewBox="0 0 16 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M0 1.25 8 6.75 16 1.25" stroke="currentColor" stroke-width="2" />
+              </svg>
+            </span>
+            <span class="detail-desktop__guestbook-send-label">방명록 전송하기</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
