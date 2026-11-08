@@ -56,6 +56,7 @@ function showLoadError() {
 }
 
 async function loadEntries() {
+  if (document.documentElement.dataset.viewport === 'web') return;
   const root = document.querySelector('[data-guestbook-entries]');
   if (!root) return;
 

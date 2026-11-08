@@ -1,6 +1,7 @@
 import { appendGuestbookEntry } from '../lib/guestbook-storage';
 import { exhibitionFontFamily } from '../lib/exhibition-fonts';
 import { isSitePath, normalizePathname, sitePath, sitePathMainList } from '../lib/site-path';
+import { GUESTBOOK_SKIP_ENTER_KEY, playGuestbookPartitionClose } from './guestbook-partition';
 import { syncViewportScale } from './viewport-scale';
 
 const OPEN_CLASS = 'is-open';
@@ -17,6 +18,37 @@ const SCROLL_TOP_PX = 8;
 const MOTION_MS = 900;
 const DEFAULT_GUESTBOOK_PLACEHOLDER = '방명을 남겨 주세요.';
 const DESKTOP_INLINE_PLACEHOLDER = '글꼴을 선택하고 방명을 남겨주세요.';
+const GUESTBOOK_HIGHLIGHT_KEY = 'guestbook:highlight-font';
+
+function isWebLayout(): boolean {
+  return (
+    document.documentElement.dataset.viewport === 'web' ||
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  );
+}
+
+async function navigateToGuestbook(fontId: string) {
+  try {
+    sessionStorage.setItem(GUESTBOOK_HIGHLIGHT_KEY, fontId);
+  } catch {
+    /* ignore */
+  }
+  const q = encodeURIComponent(fontId);
+  const path = sitePath(`guestbook/?font=${q}`);
+
+  if (isWebLayout() && !document.body.classList.contains('page-guestbook')) {
+    const played = await playGuestbookPartitionClose();
+    if (played) {
+      try {
+        sessionStorage.setItem(GUESTBOOK_SKIP_ENTER_KEY, '1');
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  window.location.assign(path);
+}
 
 /** e.g. 서풍 → 서풍으로 / 놀이 → 놀이로 */
 function guestbookPlaceholderForFont(fontName: string): string {
@@ -217,7 +249,7 @@ function initDesktopInlineGuestbook(root: HTMLElement) {
     void appendGuestbookEntry({ fontId, text })
       .then(() => {
         messageInput.value = '';
-        window.location.assign(sitePath('guestbook/'));
+        void navigateToGuestbook(fontId);
       })
       .catch(() => {
         submitBtn?.removeAttribute('disabled');
@@ -228,7 +260,7 @@ function initDesktopInlineGuestbook(root: HTMLElement) {
 
 function initGuestbook() {
   const desktopRoot = document.querySelector<HTMLElement>('[data-guestbook-desktop-inline]');
-  if (document.documentElement.dataset.viewport === 'web' && desktopRoot) {
+  if (isWebLayout() && desktopRoot) {
     initDesktopInlineGuestbook(desktopRoot);
     return;
   }
@@ -685,7 +717,7 @@ function initGuestbook() {
       .then(() => {
         messageInput.value = '';
         animateClose(() => {
-          window.location.assign(sitePath('guestbook/'));
+          void navigateToGuestbook(fontId);
         });
       })
       .catch(() => {
@@ -716,8 +748,7 @@ function initGuestbook() {
   });
 }
 
-function initDetailDesktopGuestbookSend() {
-  if (document.documentElement.dataset.viewport !== 'web') return;
+function bindDetailDesktopGuestbookSend() {
   if (!document.body.classList.contains('page-detail')) return;
 
   const root = document.querySelector<HTMLElement>('[data-detail-desktop]');
@@ -740,13 +771,27 @@ function initDetailDesktopGuestbookSend() {
     btn.disabled = true;
     void appendGuestbookEntry({ fontId, text })
       .then(() => {
-        window.location.assign(sitePath('guestbook/'));
+        void navigateToGuestbook(fontId);
       })
       .catch(() => {
         syncDisabled();
         window.alert('방명을 저장하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.');
       });
   });
+}
+
+function initDetailDesktopGuestbookSend() {
+  if (!document.body.classList.contains('page-detail')) return;
+  if (isWebLayout()) {
+    bindDetailDesktopGuestbookSend();
+    return;
+  }
+  const onReady = () => {
+    if (!isWebLayout()) return;
+    document.documentElement.removeEventListener('desktop-viewport-scale', onReady);
+    bindDetailDesktopGuestbookSend();
+  };
+  document.documentElement.addEventListener('desktop-viewport-scale', onReady);
 }
 
 initGuestbook();

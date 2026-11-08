@@ -230,7 +230,10 @@ export function exhibitionFontFaceCss(baseUrl: string, options: ExhibitionFontFa
   --font-specimen: ${family};
 }`);
     apply.push(`.font-list-item[data-font-id='${id}'] .font-list-item__preview,
-.guestbook-entry[data-font-id='${id}'] .font-list-item__preview {
+.guestbook-entry[data-font-id='${id}'] .font-list-item__preview,
+.guestbook-desktop__font-cell[data-font-id='${id}'] .guestbook-desktop__font-label,
+.guestbook-desktop__empty[data-font-id='${id}'],
+.guestbook-desktop__entry[data-font-id='${id}'] .guestbook-desktop__entry-text {
   font-family: ${family};
 }`);
     apply.push(

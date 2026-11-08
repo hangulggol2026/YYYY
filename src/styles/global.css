@@ -197,7 +197,10 @@ html:not(.fonts-ready) .detail-hero__title,
 html:not(.fonts-ready) .detail-desktop__title,
 html:not(.fonts-ready) .detail-desktop__specimen,
 html:not(.fonts-ready) .font-list-item__preview,
-html:not(.fonts-ready) .guestbook-panel__input {
+html:not(.fonts-ready) .guestbook-panel__input,
+html:not(.fonts-ready) .guestbook-desktop__font-label,
+html:not(.fonts-ready) .guestbook-desktop__empty[data-font-id],
+html:not(.fonts-ready) .guestbook-desktop__entry-text {
   color: transparent !important;
   caret-color: transparent;
 }
@@ -212,7 +215,10 @@ html.fonts-ready .specimen-text,
 html.fonts-ready .detail-hero__title,
 html.fonts-ready .detail-desktop__title,
 html.fonts-ready .detail-desktop__specimen,
-html.fonts-ready .font-list-item__preview {
+html.fonts-ready .font-list-item__preview,
+html.fonts-ready .guestbook-desktop__font-label,
+html.fonts-ready .guestbook-desktop__empty[data-font-id],
+html.fonts-ready .guestbook-desktop__entry-text {
   transition: color 0.15s ease;
 }
 

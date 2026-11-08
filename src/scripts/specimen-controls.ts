@@ -105,6 +105,13 @@ function bindSpecimenMobileEditing(textarea: HTMLTextAreaElement) {
   });
 }
 
+function applySpecimenDefault(textarea: HTMLTextAreaElement) {
+  const canonical = textarea.dataset.specimenDefault;
+  if (!canonical) return;
+  textarea.defaultValue = canonical;
+  textarea.value = canonical;
+}
+
 function specimenRoot(): ParentNode | null {
   const isWeb = document.documentElement.dataset.viewport === 'web';
   if (isWeb) return document.querySelector('[data-detail-desktop]');
@@ -129,7 +136,7 @@ function init() {
   resetSlidersToDefault(controls);
 
   let activeWeight: SpecimenWeight = 400;
-  textarea.value = textarea.defaultValue;
+  applySpecimenDefault(textarea);
 
   const saved = localStorage.getItem(storageKey);
   if (saved) {
@@ -200,7 +207,7 @@ function init() {
   update();
 
   window.addEventListener('pageshow', () => {
-    textarea.value = textarea.defaultValue;
+    applySpecimenDefault(textarea);
     resetSlidersToDefault(controls);
     update();
   });

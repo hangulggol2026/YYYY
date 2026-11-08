@@ -1,10 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GuestbookView from '../components/GuestbookView.astro';
+import GuestbookDesktop from '../components/GuestbookDesktop.astro';
 import exhibition from '../../data/exhibition.json';
 ---
 
 <BaseLayout title={`방명록 | ${exhibition.title}`} bodyClass="page-guestbook">
-  <GuestbookView />
+  <GuestbookDesktop />
+  <div class="guestbook-mobile-chrome">
+    <GuestbookView />
+  </div>
+  <script src="../scripts/guestbook-desktop.ts"></script>
   <script src="../scripts/guestbook-entries.ts"></script>
 </BaseLayout>
