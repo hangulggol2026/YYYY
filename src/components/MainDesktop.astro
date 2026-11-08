@@ -1,13 +1,12 @@
 ---
 import FontListItem from './FontListItem.astro';
 import GuestbookInlineFields from './GuestbookInlineFields.astro';
+import DesktopCreditsBlock from './DesktopCreditsBlock.astro';
+import DesktopPartnerLogos from './DesktopPartnerLogos.astro';
 import fontsData from '../../data/fonts.json';
 import exhibition from '../../data/exhibition.json';
 
 const base = import.meta.env.BASE_URL;
-const introLines =
-  (exhibition as { introLines?: string[] }).introLines ?? exhibition.introParagraphs;
-const introText = introLines.join('\n');
 ---
 
 <div class="main-desktop" data-main-desktop>
@@ -29,7 +28,8 @@ const introText = introLines.join('\n');
             <GuestbookInlineFields guestbookLabel={exhibition.guestbook.label} />
           </div>
 
-          <p class="main-desktop__intro">{introText}</p>
+          <DesktopCreditsBlock />
+          <DesktopPartnerLogos base={base} variant="main-left" />
         </aside>
 
         <div class="main-desktop__right">

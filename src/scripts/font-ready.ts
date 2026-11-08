@@ -1,4 +1,8 @@
-import { EXHIBITION_FONTS, exhibitionFontLoadDescriptors } from '../lib/exhibition-fonts';
+import {
+  EXHIBITION_BLANK_FAMILY,
+  EXHIBITION_FONTS,
+  exhibitionFontLoadDescriptors,
+} from '../lib/exhibition-fonts';
 
 const READY_CLASS = 'fonts-ready';
 
@@ -54,9 +58,15 @@ async function loadExhibitionFonts() {
   }
 
   const descriptors = descriptorsForPage();
+  const blankDescriptors = descriptors.filter((d) => d.family === EXHIBITION_BLANK_FAMILY);
+  const faceDescriptors = descriptors.filter((d) => d.family !== EXHIBITION_BLANK_FAMILY);
+
+  for (const { family, weight } of blankDescriptors) {
+    await loadOne(family, weight);
+  }
 
   // Sequential for heavy faces (avoids decoding 여러 거대 CFF at once)
-  for (const { family, weight } of descriptors) {
+  for (const { family, weight } of faceDescriptors) {
     await loadOne(family, weight);
   }
 

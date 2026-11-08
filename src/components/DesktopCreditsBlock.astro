@@ -1,0 +1,20 @@
+---
+import exhibition from '../../data/exhibition.json';
+
+const participantLines =
+  (exhibition as { participantLines?: string[] }).participantLines ??
+  [exhibition.participants.join(' ')];
+---
+
+<div class="desktop-credits" data-desktop-credits>
+  <span class="desktop-credits__label desktop-credits__label--1">참여</span>
+  {
+    participantLines.map((line, i) => (
+      <span class={`desktop-credits__value desktop-credits__value--p${i + 1}`}>{line}</span>
+    ))
+  }
+  <span class="desktop-credits__label desktop-credits__label--2">협업</span>
+  <span class="desktop-credits__value desktop-credits__value--collab">{exhibition.collaboration}</span>
+  <span class="desktop-credits__label desktop-credits__label--3">웹</span>
+  <span class="desktop-credits__value desktop-credits__value--web">{exhibition.web}</span>
+</div>

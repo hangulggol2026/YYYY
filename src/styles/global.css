@@ -200,6 +200,12 @@ html:not(.fonts-ready) .guestbook-panel__input {
   caret-color: transparent;
 }
 
+html:not(.fonts-ready)
+  .guestbook-panel__grid:has(.guestbook-font-picker[data-selected-font])
+  .guestbook-panel__input::placeholder {
+  color: transparent;
+}
+
 html.fonts-ready .specimen-text,
 html.fonts-ready .detail-hero__title,
 html.fonts-ready .font-list-item__preview {
@@ -328,6 +334,32 @@ html[data-landing-fit='contain'] .landing-viewport {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Mobile main list — scroll inside partition-main (not document) so custom scrollbar applies */
+html:not([data-viewport='web']):has(.partition-stage.is-open),
+html:not([data-viewport='web']):has(.partition-stage.is-open) body {
+  overflow: hidden;
+  height: var(--vv-height, 100dvh);
+  overscroll-behavior: none;
+}
+
+html:not([data-viewport='web']) .partition-stage.is-open {
+  display: flex;
+  flex-direction: column;
+  height: var(--vv-height, 100dvh);
+  max-height: var(--vv-height, 100dvh);
+  min-height: 0;
+  overflow: hidden;
+}
+
+html:not([data-viewport='web']) .partition-stage.is-open .partition-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 .partition-stage:not(.is-open) .partition-main .guestbook-sticky {
@@ -615,7 +647,8 @@ html[data-landing-fit='width-scroll'] .landing-canvas {
 
 .landing-credits__logos {
   position: absolute;
-  left: var(--landing-web-logos-x);
+  left: auto;
+  right: calc(-1 * var(--landing-logos-partition-overhang));
   top: var(--landing-web-logos-top);
   display: flex;
   align-items: flex-end;
@@ -630,6 +663,7 @@ html[data-landing-fit='width-scroll'] .landing-canvas {
 .landing-credits__logo-agti {
   height: var(--landing-logo-agti-h);
   width: auto;
+  margin-top: var(--landing-logo-agti-baseline-align);
 }
 
 html[data-debug-grid] .landing-canvas::before {
@@ -1123,8 +1157,8 @@ body.page-detail .guestbook-panel__toolbar {
   border: none;
   background: transparent;
   color: inherit;
-  font: inherit;
   font-size: calc(54 * var(--vf));
+  font-weight: 400;
   line-height: 1.5;
   text-align: left;
   cursor: pointer;
@@ -1163,8 +1197,9 @@ body.page-detail .guestbook-panel__toolbar {
   border-top: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: inherit;
-  font-family: var(--font-ui);
+  font-family: 'ExhibitionBlank';
   font-size: calc(78 * var(--vf) * 0.75 * 1.3);
+  font-synthesis: none;
   line-height: 1.625;
   padding: var(--guestbook-panel-section-gap) 0 0;
   overflow-y: auto;
@@ -1173,6 +1208,10 @@ body.page-detail .guestbook-panel__toolbar {
 
 .guestbook-panel__input::placeholder {
   color: rgba(255, 255, 255, 0.45);
+  font-family: var(--font-ui);
+}
+
+.guestbook-panel__grid:has(.guestbook-font-picker[data-selected-font]) .guestbook-panel__input::placeholder {
   font-family: inherit;
 }
 
@@ -1684,6 +1723,7 @@ html:not([data-viewport='web']) .landing-viewport,
 html:not([data-viewport='web']) .partition-main,
 html:not([data-viewport='web']) .guestbook-font-picker__list,
 html:not([data-viewport='web']) .guestbook-panel__sheet,
+html:not([data-viewport='web']) .guestbook-panel__input,
 html:not([data-viewport='web']) .detail-specimen textarea {
   scrollbar-width: thin;
   scrollbar-color: var(--ex-scrollbar-thumb) var(--ex-scrollbar-track);
@@ -1693,15 +1733,17 @@ html:not([data-viewport='web']) .landing-viewport::-webkit-scrollbar,
 html:not([data-viewport='web']) .partition-main::-webkit-scrollbar,
 html:not([data-viewport='web']) .guestbook-font-picker__list::-webkit-scrollbar,
 html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar,
+html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar,
 html:not([data-viewport='web']) .detail-specimen textarea::-webkit-scrollbar {
-  width: var(--ex-scrollbar-size);
-  height: var(--ex-scrollbar-size);
+  width: var(--ex-scrollbar-size-mobile);
+  height: var(--ex-scrollbar-size-mobile);
 }
 
 html:not([data-viewport='web']) .landing-viewport::-webkit-scrollbar-corner,
 html:not([data-viewport='web']) .partition-main::-webkit-scrollbar-corner,
 html:not([data-viewport='web']) .guestbook-font-picker__list::-webkit-scrollbar-corner,
 html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-corner,
+html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar-corner,
 html:not([data-viewport='web']) .detail-specimen textarea::-webkit-scrollbar-corner {
   background: var(--ex-scrollbar-track);
 }
@@ -1710,6 +1752,7 @@ html:not([data-viewport='web']) .landing-viewport::-webkit-scrollbar-track,
 html:not([data-viewport='web']) .partition-main::-webkit-scrollbar-track,
 html:not([data-viewport='web']) .guestbook-font-picker__list::-webkit-scrollbar-track,
 html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-track,
+html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar-track,
 html:not([data-viewport='web']) .detail-specimen textarea::-webkit-scrollbar-track {
   background: var(--ex-scrollbar-track);
   border-radius: 0;
@@ -1719,6 +1762,7 @@ html:not([data-viewport='web']) .landing-viewport::-webkit-scrollbar-thumb,
 html:not([data-viewport='web']) .partition-main::-webkit-scrollbar-thumb,
 html:not([data-viewport='web']) .guestbook-font-picker__list::-webkit-scrollbar-thumb,
 html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-thumb,
+html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar-thumb,
 html:not([data-viewport='web']) .detail-specimen textarea::-webkit-scrollbar-thumb {
   background-color: var(--ex-scrollbar-thumb);
   background-clip: padding-box;
@@ -1733,6 +1777,7 @@ html:not([data-viewport='web']) .landing-viewport::-webkit-scrollbar-button,
 html:not([data-viewport='web']) .partition-main::-webkit-scrollbar-button,
 html:not([data-viewport='web']) .guestbook-font-picker__list::-webkit-scrollbar-button,
 html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-button,
+html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar-button,
 html:not([data-viewport='web']) .detail-specimen textarea::-webkit-scrollbar-button {
   display: none;
   width: 0;
@@ -1740,12 +1785,14 @@ html:not([data-viewport='web']) .detail-specimen textarea::-webkit-scrollbar-but
 }
 
 html:not([data-viewport='web']) .guestbook-font-picker__list,
-html:not([data-viewport='web']) .guestbook-panel__sheet {
+html:not([data-viewport='web']) .guestbook-panel__sheet,
+html:not([data-viewport='web']) .guestbook-panel__input {
   scrollbar-color: #fff var(--ex-scrollbar-track);
 }
 
 html:not([data-viewport='web']) .guestbook-font-picker__list::-webkit-scrollbar-thumb,
-html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-thumb {
+html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-thumb,
+html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar-thumb {
   background-color: #fff;
   border-radius: 0;
 }

@@ -41,7 +41,7 @@
   --color-track: #cccccc;
 
   --font-ui: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
-  --font-specimen: 'Seopung', 'ExhibitionBlank';
+  --font-specimen: 'Seopung';
   --exhibition-glyphs-scale: 1;
 
   --specimen-size: calc(24 * var(--vf));
@@ -85,8 +85,12 @@
   --landing-title-to-credits: var(--landing-credits-section-gap);
   --landing-credits-section-gap: calc(146 * var(--ld));
   --landing-credits-bottom-inset: calc(146 * var(--ld));
-  --landing-web-logos-x: calc(673 * var(--ld));
   --landing-web-logos-top: calc(21 * var(--ld));
+  /* value 열 오른쪽 → 파티션(콘텐츠) 오른쪽까지 돌출 (Figma 1215−1180) */
+  --landing-logos-partition-overhang: calc(
+    var(--landing-partition-x) + var(--landing-content-w) - var(--landing-margin-x) -
+      var(--landing-label-col-w) - var(--landing-value-col-w)
+  );
   --landing-web-logo-gap: calc(37 * var(--ld));
   --landing-credit-line-h: calc(var(--landing-type-size) * 1.625);
   --landing-credits-section-break: calc(var(--landing-credits-section-gap) - var(--landing-credit-line-h));
@@ -94,8 +98,26 @@
   --landing-gap-after-collab: calc(111 * var(--ld));
   --landing-gap-before-logos: calc(21 * var(--ld));
   --landing-logo-gap: calc(37 * var(--ld));
+  /* 가로 비 한글꼴:AGTI = 71:54 (AGTI 기준), 간격 37는 AGTI 가로 54 대비 */
+  --landing-logo-w-hangul: 71;
+  --landing-logo-w-agti: 54;
   --landing-logo-agti-h: calc(41 * var(--ld));
-  --landing-logo-hangul-h: calc(44 * var(--ld));
+  --landing-logo-hangul-h: calc(
+    var(--landing-logo-agti-h) * 844.99 / 304.86 * var(--landing-logo-w-hangul) /
+      var(--landing-logo-w-agti) * 324.45 / 813.16
+  );
+  /* hangulggol_white / AGTI.svg viewBox — 사각 본문 밑선 정렬 (하단 돌출부 제외) */
+  --landing-logo-hangul-vb-h: 324.45;
+  --landing-logo-hangul-shelf-y: 248.07;
+  --landing-logo-agti-vb-h: 304.86;
+  --landing-logo-agti-block-bottom-y: 298.05;
+  /* 한글꼴 사각 밑선 ↔ AGTI 밑선 — 한글꼴 고정, AGTI만 아래로 */
+  --landing-logo-agti-baseline-align: calc(
+    var(--landing-logo-hangul-h) * (var(--landing-logo-hangul-vb-h) - var(--landing-logo-hangul-shelf-y)) /
+      var(--landing-logo-hangul-vb-h) - var(--landing-logo-agti-h) *
+      (var(--landing-logo-agti-vb-h) - var(--landing-logo-agti-block-bottom-y)) /
+      var(--landing-logo-agti-vb-h)
+  );
 
   /* Main — Figma 1:25 Main frame */
   --main-chrome-height: calc(345 * var(--vf));
@@ -149,6 +171,7 @@
   --detail-specimen-default-size: calc(52 * var(--vf));
 
   --ex-scrollbar-size: 1.5px;
+  --ex-scrollbar-size-mobile: 0.75px;
   --ex-scrollbar-thumb: #000;
   --ex-scrollbar-track: transparent;
 

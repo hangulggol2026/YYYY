@@ -234,18 +234,19 @@ function initGuestbook() {
   }
 
   const panel = document.querySelector<HTMLElement>('[data-guestbook-panel]');
-  const form = document.querySelector<HTMLFormElement>('[data-guestbook-form]');
-  const fontInput = document.querySelector<HTMLInputElement>('[data-guestbook-font]');
-  const fontPicker = document.querySelector<HTMLElement>('[data-guestbook-font-picker]');
-  const fontTrigger = document.querySelector<HTMLButtonElement>('[data-guestbook-font-trigger]');
-  const fontList = document.querySelector<HTMLElement>('[data-guestbook-font-list]');
-  const fontLabelText = document.querySelector<HTMLElement>('[data-guestbook-font-label-text]');
-  const messageInput = document.querySelector<HTMLTextAreaElement>('[data-guestbook-message]');
-  const headerHit = document.querySelector<HTMLButtonElement>('[data-guestbook-close-header]');
-  const sheet = document.querySelector<HTMLElement>('[data-guestbook-sheet]');
+  if (!panel) return;
+
+  const form = panel.querySelector<HTMLFormElement>('[data-guestbook-form]');
+  const fontInput = panel.querySelector<HTMLInputElement>('[data-guestbook-font]');
+  const fontPicker = panel.querySelector<HTMLElement>('[data-guestbook-font-picker]');
+  const fontTrigger = panel.querySelector<HTMLButtonElement>('[data-guestbook-font-trigger]');
+  const fontList = panel.querySelector<HTMLElement>('[data-guestbook-font-list]');
+  const fontLabelText = panel.querySelector<HTMLElement>('[data-guestbook-font-label-text]');
+  const messageInput = panel.querySelector<HTMLTextAreaElement>('[data-guestbook-message]');
+  const headerHit = panel.querySelector<HTMLButtonElement>('[data-guestbook-close-header]');
+  const sheet = panel.querySelector<HTMLElement>('[data-guestbook-sheet]');
 
   if (
-    !panel ||
     !form ||
     !fontInput ||
     !fontPicker ||
@@ -434,6 +435,12 @@ function initGuestbook() {
     fontList.hidden = true;
   };
 
+  const applyTriggerLabelFont = (fontId: string) => {
+    const family = exhibitionFontFamily(fontId);
+    if (family) fontLabelText.style.setProperty('font-family', family);
+    else fontLabelText.style.removeProperty('font-family');
+  };
+
   const setFontId = (fontId: string, label: string) => {
     fontInput.value = fontId;
     fontPicker.dataset.selectedFont = fontId;
@@ -442,6 +449,7 @@ function initGuestbook() {
       const selected = option.dataset.fontId === fontId;
       option.setAttribute('aria-selected', selected ? 'true' : 'false');
     });
+    applyTriggerLabelFont(fontId);
     applyGuestbookMessageFont(fontId);
     syncMessagePlaceholder();
   };

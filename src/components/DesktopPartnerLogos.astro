@@ -1,0 +1,24 @@
+---
+interface Props {
+  base: string;
+  /** landing: 우측 패널 하단 / main: 좌측 패널 하단 (Figma 25:2 · 25:3) */
+  variant: 'landing-right' | 'main-left';
+}
+
+const { base, variant } = Astro.props;
+---
+
+<span class={`desktop-partner-logos desktop-partner-logos--${variant}`}>
+  <img
+    src={`${base}assets/hangulggol_white.svg`}
+    alt="한글꼴연구회"
+    class="desktop-partner-logos__hangul"
+    decoding="async"
+  />
+  <img
+    src={`${base}assets/AGTI.svg`}
+    alt="AGTI"
+    class="desktop-partner-logos__agti"
+    decoding="async"
+  />
+</span>

@@ -1,3 +1,5 @@
+import { EXHIBITION_FACE_UNICODE_RANGES } from './exhibition-font-unicode-ranges.generated';
+
 /** Exhibition faces under public/fonts/exhibition — id → CSS family + woff2 file(s). */
 export type ExhibitionFontFaceFile = { weight: number; file: string };
 
@@ -72,6 +74,60 @@ export function exhibitionDetailCaptionGapDelta(fontId: string): string | null {
   return EXHIBITION_DETAIL_CAPTION_GAP_DELTA[fontId] ?? null;
 }
 
+const UNICODE_RANGE_MAX = 0x10ffff;
+
+function parseUnicodeRangeList(css: string): Array<[number, number]> {
+  const ranges: Array<[number, number]> = [];
+  for (const part of css.split(',')) {
+    const token = part.trim();
+    if (!token.toUpperCase().startsWith('U+')) continue;
+    const body = token.slice(2);
+    const dash = body.indexOf('-');
+    if (dash === -1) {
+      const cp = Number.parseInt(body, 16);
+      if (!Number.isNaN(cp)) ranges.push([cp, cp]);
+    } else {
+      const start = Number.parseInt(body.slice(0, dash), 16);
+      const end = Number.parseInt(body.slice(dash + 1), 16);
+      if (!Number.isNaN(start) && !Number.isNaN(end)) ranges.push([start, end]);
+    }
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged: Array<[number, number]> = [];
+  for (const [start, end] of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && start <= last[1] + 1) last[1] = Math.max(last[1], end);
+    else merged.push([start, end]);
+  }
+  return merged;
+}
+
+function formatCodepoint(cp: number): string {
+  return `U+${cp.toString(16).toUpperCase()}`;
+}
+
+/** Blank fallback face must not overlap primary unicode-range (WebKit textarea doubles glyphs otherwise). */
+function complementUnicodeRange(primaryCss: string | undefined): string | null {
+  if (!primaryCss) return null;
+  const primary = parseUnicodeRangeList(primaryCss);
+  if (primary.length === 0) return null;
+
+  const gaps: Array<[number, number]> = [];
+  let cursor = 0;
+  for (const [start, end] of primary) {
+    if (cursor < start) gaps.push([cursor, start - 1]);
+    cursor = Math.max(cursor, end + 1);
+  }
+  if (cursor <= UNICODE_RANGE_MAX) gaps.push([cursor, UNICODE_RANGE_MAX]);
+  if (gaps.length === 0) return null;
+
+  return gaps
+    .map(([start, end]) =>
+      start === end ? formatCodepoint(start) : `${formatCodepoint(start)}-${formatCodepoint(end)}`,
+    )
+    .join(', ');
+}
+
 export const EXHIBITION_FONTS: Record<string, ExhibitionFontFace> = {
   ilgwasa: { family: 'Ilgwasa', files: [{ weight: 400, file: 'ilgwasa.woff2' }] },
   nori: { family: 'Nori', files: [{ weight: 400, file: 'nori.woff2' }] },
@@ -108,7 +164,8 @@ export function isExhibitionFontId(fontId: string): fontId is ExhibitionFontId {
 export function exhibitionFontFamily(fontId: string): string | null {
   const entry = EXHIBITION_FONTS[fontId];
   if (!entry) return null;
-  return `'${entry.family}', '${EXHIBITION_BLANK_FAMILY}'`;
+  /* Missing glyphs use Blank via a second @font-face on the same family (no system fallback). */
+  return `'${entry.family}'`;
 }
 
 /** @font-face blocks + detail / list / guestbook preview bindings. */
@@ -130,12 +187,23 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
   for (const [id, entry] of Object.entries(EXHIBITION_FONTS)) {
     for (const face of entry.files) {
       const url = `${baseUrl}fonts/exhibition/${face.file}`;
+      const unicodeRange = EXHIBITION_FACE_UNICODE_RANGES[face.file];
+      const rangeLine = unicodeRange ? `\n  unicode-range: ${unicodeRange};` : '';
       faces.push(`@font-face {
   font-family: '${entry.family}';
   src: url('${url}') format('woff2');
   font-weight: ${face.weight};
   font-style: normal;
-  font-display: block;
+  font-display: block;${rangeLine}
+}`);
+      const blankRange = complementUnicodeRange(unicodeRange);
+      const blankRangeLine = blankRange ? `\n  unicode-range: ${blankRange};` : '';
+      faces.push(`@font-face {
+  font-family: '${entry.family}';
+  src: url('${blankUrl}') format('woff2');
+  font-weight: ${face.weight};
+  font-style: normal;
+  font-display: block;${blankRangeLine}
 }`);
     }
 
@@ -150,6 +218,13 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
     apply.push(
       `.guestbook-font-picker__option[data-font-id='${id}'] .guestbook-font-picker__option-btn,
 [data-viewport='web'] .main-desktop-guestbook .guestbook-font-picker__option[data-font-id='${id}'] .guestbook-font-picker__option-btn {
+  font-family: ${family};
+}`,
+      `.guestbook-font-picker[data-selected-font='${id}'] [data-guestbook-font-label-text] {
+  font-family: ${family};
+}`,
+      `.guestbook-panel__grid:has(.guestbook-font-picker[data-selected-font='${id}']) .guestbook-panel__input,
+[data-viewport='web'] .main-desktop-guestbook__form:has(.guestbook-font-picker[data-selected-font='${id}']) .main-desktop-guestbook__input {
   font-family: ${family};
 }`,
     );
@@ -194,6 +269,18 @@ export function exhibitionFontFaceCss(baseUrl: string): string {
       );
     }
   }
+
+  apply.push(`.font-list-item__preview,
+.guestbook-entry .font-list-item__preview,
+.specimen-text,
+.detail-hero__title,
+.guestbook-font-picker__option-btn,
+.guestbook-panel__input,
+.main-desktop-guestbook__input,
+.detail-specimen textarea,
+[data-guestbook-font-label-text] {
+  font-synthesis: none;
+}`);
 
   return `${faces.join('\n')}\n${apply.join('\n')}`;
 }

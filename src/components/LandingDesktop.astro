@@ -1,17 +1,26 @@
 ---
 import exhibition from '../../data/exhibition.json';
+import DesktopCreditsBlock from './DesktopCreditsBlock.astro';
+import DesktopPartnerLogos from './DesktopPartnerLogos.astro';
 
 interface Props {
   base: string;
 }
 
 const { base } = Astro.props;
+
+type ExhibitionCopy = typeof exhibition & {
+  desktopMastLines?: string[];
+  desktopIntroLines?: string[];
+};
+
+const copy = exhibition as ExhibitionCopy;
+const mastLines =
+  copy.desktopMastLines ?? ['한글꼴연구회 가을전 ', '《옆의 옆의 옆의 옆에》'];
 const introLines =
-  (exhibition as { introLines?: string[] }).introLines ?? exhibition.introParagraphs;
-const participantLines =
-  (exhibition as { participantLines?: string[] }).participantLines ??
-  [exhibition.participants.join(' ')];
-const introText = introLines.join('\n');
+  copy.desktopIntroLines ??
+  (exhibition as { introLines?: string[] }).introLines ??
+  exhibition.introParagraphs;
 ---
 
 <div
@@ -25,11 +34,11 @@ const introText = introLines.join('\n');
     <div class="landing-desktop__canvas" data-landing-desktop>
       <div class="landing-desktop__panel landing-desktop__panel--left" data-landing-desktop-left>
         <p class="landing-desktop__mast">
-          한글꼴연구회 가을전
-          <br />
-          《옆의 옆의 옆의 옆에》
+          {mastLines.map((line) => (
+            <span class="landing-desktop__mast-line">{line}</span>
+          ))}
         </p>
-        <p class="landing-desktop__intro">{introText}</p>
+        <DesktopCreditsBlock />
       </div>
 
       <div
@@ -40,40 +49,20 @@ const introText = introLines.join('\n');
 
       <div class="landing-desktop__panel landing-desktop__panel--right" data-landing-desktop-right>
         <div class="landing-desktop__right-slot">
-        <img
-          class="landing-desktop__wordmark"
-          src={`${base}assets/header_white.svg`}
-          alt="옆의 옆의 옆의 옆에"
-          width="1165"
-          height="200"
-          decoding="async"
-        />
-        <span class="landing-desktop__label landing-desktop__label--1">참여</span>
-        {
-          participantLines.map((line, i) => (
-            <span class={`landing-desktop__value landing-desktop__value--p${i + 1}`}>{line}</span>
-          ))
-        }
-        <span class="landing-desktop__label landing-desktop__label--2">협업</span>
-        <span class="landing-desktop__value landing-desktop__value--collab">{exhibition.collaboration}</span>
-        <span class="landing-desktop__label landing-desktop__label--3">웹</span>
-        <span class="landing-desktop__value landing-desktop__value--web">{exhibition.web}</span>
-        <img
-          class="landing-desktop__logo landing-desktop__logo--agti"
-          src={`${base}assets/AGTI.svg`}
-          alt="AGTI"
-          width="54"
-          height="20"
-          decoding="async"
-        />
-        <img
-          class="landing-desktop__logo landing-desktop__logo--hangul"
-          src={`${base}assets/hangulggol_white.svg`}
-          alt="한글꼴연구회"
-          width="48"
-          height="19"
-          decoding="async"
-        />
+          <img
+            class="landing-desktop__wordmark"
+            src={`${base}assets/header_white.svg`}
+            alt="옆의 옆의 옆의 옆에"
+            width="1165"
+            height="200"
+            decoding="async"
+          />
+          <div class="landing-desktop__intro">
+            {introLines.map((line) => (
+              <p class="landing-desktop__intro-line">{line}</p>
+            ))}
+          </div>
+          <DesktopPartnerLogos base={base} variant="landing-right" />
         </div>
       </div>
     </div>
