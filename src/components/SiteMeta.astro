@@ -11,8 +11,7 @@ const { title, description, ogImage = 'assets/og.png' } = Astro.props;
 
 const siteName = exhibition.title;
 const metaDescription =
-  description ??
-  `${exhibition.creditsTitle} — 한글꼴연구회 가을전 웹 전시`;
+  description ?? exhibition.creditsTitle;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const assetPath = `${import.meta.env.BASE_URL}${ogImage.replace(/^\//, '')}`;
