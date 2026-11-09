@@ -1681,7 +1681,7 @@ body.page-font-mangul .detail-desktop__back {
   overflow-y: auto;
   z-index: 1;
   scrollbar-width: thin;
-  scrollbar-color: var(--dl-scrollbar-thumb) var(--dl-scrollbar-track);
+  scrollbar-color: #fff var(--dl-scrollbar-track);
 }
 
 [data-viewport='web'] .guestbook-desktop__right::-webkit-scrollbar {
@@ -1694,7 +1694,7 @@ body.page-font-mangul .detail-desktop__back {
 }
 
 [data-viewport='web'] .guestbook-desktop__right::-webkit-scrollbar-thumb {
-  background-color: var(--dl-scrollbar-thumb);
+  background-color: #fff;
 }
 
 [data-viewport='web'] .guestbook-desktop__entries {
