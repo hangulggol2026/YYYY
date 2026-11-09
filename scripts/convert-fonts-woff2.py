@@ -88,30 +88,36 @@ def collect_face_unicode_ranges() -> dict[str, str]:
 
 def build_blank_woff2(out: Path) -> None:
     fb = FontBuilder(1000, isTTF=True)
-    fb.setupGlyphOrder([".notdef", "blank"])
+    names = [".notdef", "blank"]
+    fb.setupGlyphOrder(names)
     blank = empty_glyph()
-    fb.setupGlyf({".notdef": blank, "blank": blank})
-    metrics = {".notdef": (500, 0), "blank": (500, 0)}
+    # Browsers (OTS) reject a font whose glyf table is entirely empty, so .notdef gets a
+    # 1-unit contour. Mapped codepoints use the empty "blank" glyph, so nothing is drawn.
+    pen = TTGlyphPen(None)
+    pen.moveTo((0, 0))
+    pen.lineTo((0, 1))
+    pen.lineTo((1, 0))
+    pen.closePath()
+    fb.setupGlyf({".notdef": pen.glyph(), "blank": blank})
+    metrics = {n: (500, 0) for n in names}
     fb.setupHorizontalMetrics(metrics)
     fb.setupHorizontalHeader(ascent=800, descent=-200)
+    # cmap format 13 (many-to-one): every codepoint below maps to the one empty glyph, so
+    # no character can fall through to a system font. (Format 4/12 cannot express this
+    # without >65k glyphs.) Surrogates and C0/C1 controls are left unmapped.
+    from fontTools.ttLib import newTable
+    from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
+
     cmap: dict[int, str] = {}
-    # Mapped → invisible glyph. Primary exhibition face is tried first; only missing
-    # codepoints use this face (e.g. English letters), not punctuation present in the font.
-    for start, end in (
-        (0x20, 0x7E),
-        (0xA0, 0xFF),
-        (0x0100, 0x017F),
-        (0x0180, 0x024F),
-        (0x1E00, 0x1EFF),
-        (0x1100, 0x11FF),
-        (0x3000, 0x303F),
-        (0x3130, 0x318F),
-        (0xAC00, 0xD7A3),
-        (0xFF00, 0xFFEF),
-    ):
+    for start, end in ((0x20, 0x7E), (0xA0, 0xD7FF), (0xE000, 0x10FFFF)):
         for cp in range(start, end + 1):
             cmap[cp] = "blank"
-    fb.setupCharacterMap(cmap)
+    sub = CmapSubtable.newSubtable(13)
+    sub.platformID, sub.platEncID, sub.language, sub.cmap = 3, 10, 0, cmap
+    cmap_table = newTable("cmap")
+    cmap_table.tableVersion = 0
+    cmap_table.tables = [sub]
+    fb.font["cmap"] = cmap_table
     fb.setupNameTable(
         {
             "familyName": "ExhibitionBlank",

@@ -4,3 +4,5 @@ dist
 .DS_Store
 .env
 .venv-fonts
+__pycache__/
+*.pyc

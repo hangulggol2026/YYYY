@@ -77,6 +77,14 @@ async function loadExhibitionFonts() {
       await loadOne(family, weight);
     }
 
+    // Guestbook: do not gate text on all faces. ExhibitionBlank is the fallback, so
+    // glyphs stay invisible (no system-font flash) until their own face arrives.
+    if (document.body?.classList.contains('page-guestbook')) {
+      document.documentElement.classList.add(READY_CLASS);
+      await Promise.all(faceDescriptors.map(({ family, weight }) => loadOne(family, weight)));
+      return;
+    }
+
     // Sequential for heavy faces (avoids decoding 여러 거대 CFF at once)
     for (const { family, weight } of faceDescriptors) {
       await loadOne(family, weight);

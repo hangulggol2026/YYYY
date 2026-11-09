@@ -613,6 +613,11 @@
   z-index: 2;
 }
 
+/* Guestbook → main: keep the left panel's content hidden until the right list is ready. */
+html.reveal-pending[data-viewport='web'] .main-desktop__left > * {
+  visibility: hidden;
+}
+
 [data-viewport='web'] .main-desktop__header {
   position: absolute;
   left: var(--dm-left-inset);
@@ -840,6 +845,19 @@
   font-family: inherit;
 }
 
+/* Font chosen: placeholder and typed text at 1.5x. */
+[data-viewport='web']
+  .main-desktop-guestbook__form:has(.guestbook-font-picker[data-selected-font])
+  .main-desktop-guestbook__input {
+  font-size: calc(var(--dl-ui-type) * 1.5);
+}
+
+[data-viewport='web']
+  .main-desktop-guestbook__form:has(.guestbook-font-picker[data-selected-font])
+  .main-desktop-guestbook__input::placeholder {
+  font-size: calc(var(--dl-ui-type) * 1.5);
+}
+
 [data-viewport='web'] .main-desktop__right {
   position: absolute;
   left: var(--dm-right-x);
@@ -1011,7 +1029,8 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: #fff;
+  /* Left panel colour continues below the scaled canvas when the window is taller than the frame. */
+  background: linear-gradient(to right, #000 calc(620px * var(--desktop-main-scale, 1)), #fff 0);
 }
 
 [data-viewport='web'] .detail-desktop-viewport {
@@ -1047,7 +1066,9 @@
   height: calc(var(--dl-h) * 1px);
   transform: scale(var(--desktop-main-scale));
   transform-origin: top left;
-  background: #fff;
+  /* Same left-black / right-white split as the viewport behind it, so the fractional
+     (scaled) bottom edge never lets white bleed through as a hairline. */
+  background: linear-gradient(to right, #000 620px, #fff 0);
   box-sizing: border-box;
 }
 
@@ -1288,6 +1309,22 @@
   box-sizing: border-box;
 }
 
+/* The canvas is already scaled by --desktop-main-scale; the shared mobile --vf (window w/h based)
+   would shrink the chevron again on wide/short windows. Pin it in canvas px: --vf is a LENGTH
+   (px/px ratio), so keep the unit. 0.389px ≈ the old value at a 1920×1080 window. */
+[data-viewport='web'] .detail-desktop__back {
+  --vf: 0.389px;
+  --detail-back-chevron: calc(30 * var(--vf));
+  --detail-back-stroke: calc(5.5 * var(--vf));
+}
+
+/* Invisible, layout-neutral enlargement of the click target around the chevron. */
+[data-viewport='web'] .detail-desktop__back::after {
+  content: '';
+  position: absolute;
+  inset: -40px -48px -40px -48px;
+}
+
 [data-viewport='web'] .detail-desktop__back--specimen {
   top: var(--dd-header-logo-top);
   right: calc(100% - var(--dd-guestbook-send-x) - var(--dd-guestbook-send-w));
@@ -1510,6 +1547,12 @@
   position: absolute;
 }
 
+[data-viewport='web'] .guestbook-desktop__home {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 [data-viewport='web'] .guestbook-desktop__rule {
   position: absolute;
   left: var(--dm-left-inset);
@@ -1590,10 +1633,11 @@
 [data-viewport='web'] .guestbook-desktop__font-rule {
   position: absolute;
   left: 50%;
-  top: calc(100% + 0.25em);
+  top: calc(100% + 14px);
   transform: translateX(-50%);
-  width: min(100%, 4.5em);
-  height: max(2px, 0.04em);
+  /* Stack shrink-wraps the label, so 100% = exact text width (both ends flush). */
+  width: 100%;
+  height: 2px;
   background: #fff;
   opacity: 0;
   pointer-events: none;
@@ -1659,15 +1703,19 @@
   top: 50%;
   margin: 0;
   white-space: nowrap;
+  /* Keep vertically centred even before the marquee animation starts. */
+  transform: translateY(-50%);
   will-change: transform;
 }
 
 [data-viewport='web'] .guestbook-desktop__entry-float[data-direction='ltr'] {
+  left: 100%;
   animation: guestbook-float-ltr var(--guestbook-float-duration, 70s) linear infinite;
   animation-delay: var(--guestbook-float-delay, 0s);
 }
 
 [data-viewport='web'] .guestbook-desktop__entry-float[data-direction='rtl'] {
+  right: 100%;
   animation: guestbook-float-rtl var(--guestbook-float-duration, 70s) linear infinite;
   animation-delay: var(--guestbook-float-delay, 0s);
 }
@@ -1681,19 +1729,27 @@
   font-synthesis: none;
 }
 
+/* 벽조목: ink fills the marquee row at 96px — shrink the glyphs only; the row keeps its height. */
+[data-viewport='web'] .guestbook-desktop__entry[data-font-id='byeokjomok'] .guestbook-desktop__entry-text {
+  font-size: calc(96px * 0.8);
+}
+
 [data-viewport='web'] .guestbook-desktop__empty {
   margin: 120px auto 0;
   padding: 0 24px;
   max-width: 40ch;
-  font-family: var(--font-ui);
   font-size: 48px;
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.65);
   text-align: center;
 }
 
+[data-viewport='web'] .guestbook-desktop__empty:not([data-font-id]) {
+  font-family: var(--font-ui);
+}
+
+/* font-family comes from the generated per-font rule (.guestbook-desktop__empty[data-font-id='…']). */
 [data-viewport='web'] .guestbook-desktop__empty[data-font-id] {
-  font-family: inherit;
   color: rgba(255, 255, 255, 0.72);
 }
 

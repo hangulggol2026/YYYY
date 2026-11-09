@@ -1,3 +1,4 @@
+import { playGuestbookRevealOpen } from './guestbook-partition';
 import { releaseLandingScrollLock, syncLandingCanvasHeight } from './landing-fit';
 import { readViewportProfile } from '../lib/viewport-profile';
 import { isSitePath, sitePath, sitePathMainList } from '../lib/site-path';
@@ -19,7 +20,8 @@ const EASING = 'cubic-bezier(0.65, 0, 0.35, 1)';
 const MAIN_OPEN_SESSION_KEY = 'exhibition-partition-main';
 
 function hasEnterMainQuery(): boolean {
-  return new URLSearchParams(window.location.search).get('enter') === 'main';
+  const enter = new URLSearchParams(window.location.search).get('enter');
+  return enter === 'main' || enter === 'reveal';
 }
 
 function markMainOpenInSession() {
@@ -475,6 +477,12 @@ function init() {
 
   bindMainListNavigation(root);
 
+  // Set by the inline script in index.astro to avoid a landing flash; openPartition()
+  // below re-applies it synchronously (same task, so no intermediate paint).
+  const earlyOpen = root.hasAttribute('data-early-open');
+  root.removeAttribute('data-early-open');
+  if (earlyOpen) root.classList.remove('is-open');
+
   let skipAutoOpen = false;
   if (isReloadNavigation()) {
     clearMainOpenInSession();
@@ -487,8 +495,11 @@ function init() {
   let activated = false;
   if (!skipAutoOpen) {
     if (consumeEnterMainQuery()) {
+      // Read before openPartition(), which rewrites the URL.
+      const fromGuestbook = new URLSearchParams(window.location.search).get('enter') === 'reveal';
       void openPartition(root, { instant: true });
       activated = true;
+      if (fromGuestbook) void playGuestbookRevealOpen();
     } else if (shouldRestoreMainFromSession() && cameFromFontDetail()) {
       void openPartition(root, { instant: true });
       activated = true;

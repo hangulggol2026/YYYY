@@ -1,9 +1,11 @@
 ---
 interface Props {
   variant: 'onDark' | 'onLight';
+  /** When set, the logo links here. */
+  href?: string;
 }
 
-const { variant } = Astro.props;
+const { variant, href } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const src =
   variant === 'onDark'
@@ -12,10 +14,23 @@ const src =
 ---
 
 <header class="site-header">
-  <img
-    src={src}
-    alt="옆의 옆의 옆의 옆에"
-    width={variant === 'onDark' ? 1157 : 887}
-    height={variant === 'onDark' ? 200 : 153}
-  />
+  {
+    href ? (
+      <a href={href} class="site-header__link">
+        <img
+          src={src}
+          alt="옆의 옆의 옆의 옆에"
+          width={variant === 'onDark' ? 1157 : 887}
+          height={variant === 'onDark' ? 200 : 153}
+        />
+      </a>
+    ) : (
+      <img
+        src={src}
+        alt="옆의 옆의 옆의 옆에"
+        width={variant === 'onDark' ? 1157 : 887}
+        height={variant === 'onDark' ? 200 : 153}
+      />
+    )
+  }
 </header>

@@ -700,6 +700,10 @@ html[data-debug-grid] .landing-canvas::before {
   padding: calc(24 * var(--vf)) 0 calc(28 * var(--vf));
 }
 
+.site-header__link {
+  display: block;
+}
+
 .site-header img {
   width: 100%;
   height: auto;
@@ -837,7 +841,7 @@ body.page-guestbook .main-header .site-header img {
   will-change: transform;
 }
 
-.font-list-item__carousel-track .font-list-item__preview:first-child {
+.font-list-item__carousel-track .font-list-item__preview {
   padding-right: var(--main-marquee-gap);
 }
 
@@ -867,7 +871,7 @@ body.page-guestbook .main-header .site-header img {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-100% / var(--marquee-copies, 2)));
   }
 }
 

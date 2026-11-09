@@ -111,7 +111,7 @@ function parseUnicodeRangeList(css: string): Array<[number, number]> {
 }
 
 function formatCodepoint(cp: number): string {
-  return `U+${cp.toString(16).toUpperCase().padStart(4, '0')}`;
+  return cp.toString(16).toUpperCase().padStart(4, '0');
 }
 
 export type ExhibitionFontFaceCssOptions = {
@@ -138,7 +138,7 @@ function complementUnicodeRange(primaryCss: string | undefined): string | null {
 
   return gaps
     .map(([start, end]) =>
-      start === end ? formatCodepoint(start) : `${formatCodepoint(start)}-${formatCodepoint(end)}`,
+      start === end ? `U+${formatCodepoint(start)}` : `U+${formatCodepoint(start)}-${formatCodepoint(end)}`,
     )
     .join(', ');
 }
@@ -179,8 +179,8 @@ export function isExhibitionFontId(fontId: string): fontId is ExhibitionFontId {
 export function exhibitionFontFamily(fontId: string): string | null {
   const entry = EXHIBITION_FONTS[fontId];
   if (!entry) return null;
-  /* Missing glyphs use Blank via a second @font-face on the same family (no system fallback). */
-  return `'${entry.family}'`;
+  /* Missing glyphs: Blank twin @font-face (non-WebKit) or this trailing family (WebKit compact mode). Never system fonts. */
+  return `'${entry.family}', '${EXHIBITION_BLANK_FAMILY}'`;
 }
 
 /** @font-face blocks + detail / list / guestbook preview bindings. */

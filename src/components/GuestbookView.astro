@@ -4,7 +4,7 @@ import LayoutGrid from './LayoutGrid.astro';
 ---
 
 <LayoutGrid bleed dark class="main-header">
-  <SiteHeader variant="onDark" />
+  <SiteHeader variant="onDark" href={`${import.meta.env.BASE_URL}?enter=reveal`} />
 </LayoutGrid>
 
 <LayoutGrid light class="main-list guestbook-list">

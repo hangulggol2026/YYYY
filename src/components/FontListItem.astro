@@ -9,6 +9,8 @@ interface Props {
 
 const { font, previewPhrase } = Astro.props;
 const base = import.meta.env.BASE_URL;
+// Enough repeats that the track stays full while it scrolls exactly one copy (1/N) per cycle.
+const MARQUEE_COPIES = 8;
 const maniculeRel = maniculeImagePath(font.id);
 const maniculeSrc = maniculeRel ? `${base}${maniculeRel}` : null;
 ---
@@ -32,9 +34,14 @@ const maniculeSrc = maniculeRel ? `${base}${maniculeRel}` : null;
       <span class="font-list-item__designer">{font.designer}</span>
     </p>
     <div class="font-list-item__carousel" aria-label={previewPhrase}>
-      <div class="font-list-item__carousel-track">
-        <span class="font-list-item__preview specimen-text">{previewPhrase}</span>
-        <span class="font-list-item__preview specimen-text" aria-hidden="true">{previewPhrase}</span>
+      <div class="font-list-item__carousel-track" style={`--marquee-copies: ${MARQUEE_COPIES}`}>
+        {
+          Array.from({ length: MARQUEE_COPIES }, (_, i) => (
+            <span class="font-list-item__preview specimen-text" aria-hidden={i === 0 ? undefined : 'true'}>
+              {previewPhrase}
+            </span>
+          ))
+        }
       </div>
     </div>
   </a>

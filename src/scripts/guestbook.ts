@@ -18,7 +18,6 @@ const SCROLL_TOP_PX = 8;
 const MOTION_MS = 900;
 const DEFAULT_GUESTBOOK_PLACEHOLDER = '방명을 남겨 주세요.';
 const DESKTOP_INLINE_PLACEHOLDER = '글꼴을 선택하고 방명을 남겨주세요.';
-const GUESTBOOK_HIGHLIGHT_KEY = 'guestbook:highlight-font';
 
 function isWebLayout(): boolean {
   return (
@@ -28,13 +27,9 @@ function isWebLayout(): boolean {
 }
 
 async function navigateToGuestbook(fontId: string) {
-  try {
-    sessionStorage.setItem(GUESTBOOK_HIGHLIGHT_KEY, fontId);
-  } catch {
-    /* ignore */
-  }
-  const q = encodeURIComponent(fontId);
-  const path = sitePath(`guestbook/?font=${q}`);
+  // Always land on the full guestbook (no per-font filter), whichever font was used.
+  void fontId;
+  const path = sitePath('guestbook/');
 
   if (isWebLayout() && !document.body.classList.contains('page-guestbook')) {
     const played = await playGuestbookPartitionClose();

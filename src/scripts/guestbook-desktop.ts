@@ -4,7 +4,6 @@ import {
   playGuestbookPartitionCloseOnCanvas,
 } from './guestbook-partition';
 
-const HIGHLIGHT_KEY = 'guestbook:highlight-font';
 
 function isWebLayout(): boolean {
   return (
@@ -26,16 +25,6 @@ function whenWebLayout(run: () => void) {
   document.documentElement.addEventListener('desktop-viewport-scale', onReady);
 }
 
-function readHighlightFontId(): string | null {
-  try {
-    const fromUrl = new URLSearchParams(window.location.search).get('font');
-    if (fromUrl) return fromUrl;
-    return sessionStorage.getItem(HIGHLIGHT_KEY);
-  } catch {
-    return null;
-  }
-}
-
 function consumeSkipEnterAnim(): boolean {
   try {
     const skip = sessionStorage.getItem(GUESTBOOK_SKIP_ENTER_KEY) === '1';
@@ -54,15 +43,6 @@ function setActiveFont(fontId: string | null) {
   });
 }
 
-function hashSeed(parts: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < parts.length; i += 1) {
-    h ^= parts.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return Math.abs(h);
-}
-
 function renderEntry(entry: GuestbookEntry, index: number) {
   const wrap = document.createElement('article');
   wrap.className = 'guestbook-desktop__entry';
@@ -70,12 +50,14 @@ function renderEntry(entry: GuestbookEntry, index: number) {
 
   const float = document.createElement('div');
   float.className = 'guestbook-desktop__entry-float';
-  const seed = hashSeed(`${entry.createdAt}:${entry.text}:${index}`);
-  const duration = 52 + (seed % 28);
-  const delay = (seed % 24) * 0.45;
-  const rtl = seed % 2 === 0;
-  float.style.setProperty('--guestbook-float-duration', `${duration}s`);
-  float.style.setProperty('--guestbook-float-delay', `${delay}s`);
+  // Independent random draws: duration, starting phase and direction must not share bits.
+  const duration = 52 + Math.random() * 28;
+  // Negative delay = start already part-way along the track, so entries are spread
+  // across the whole width from the first frame (no wave, no waiting off-screen).
+  const delay = -Math.random() * duration;
+  const rtl = Math.random() < 0.5;
+  float.style.setProperty('--guestbook-float-duration', `${duration.toFixed(2)}s`);
+  float.style.setProperty('--guestbook-float-delay', `${delay.toFixed(2)}s`);
   if (rtl) float.dataset.direction = 'rtl';
   else float.dataset.direction = 'ltr';
 
@@ -129,8 +111,7 @@ async function loadAndRender(filterFontId: string | null) {
 }
 
 function initFontFilter() {
-  const highlightFontId = readHighlightFontId();
-  let filterFontId: string | null = highlightFontId;
+  let filterFontId: string | null = null;
   setActiveFont(filterFontId);
 
   document.querySelectorAll<HTMLButtonElement>('[data-guestbook-desktop-font]').forEach((btn) => {
@@ -171,6 +152,6 @@ whenWebLayout(() => {
 
 window.addEventListener('pageshow', (event) => {
   if (event.persisted && isWebLayout()) {
-    void loadAndRender(readHighlightFontId());
+    void loadAndRender(null);
   }
 });

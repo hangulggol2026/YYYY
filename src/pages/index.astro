@@ -12,6 +12,33 @@ const base = import.meta.env.BASE_URL;
 
 <BaseLayout title={exhibition.title} bodyClass="page-landing">
   <div id="partition-root" class="partition-stage" data-partition-root>
+    <script is:inline>
+      /* Back from a detail page (?enter=main): mark the stage open before first paint so the
+         landing never flashes. partition-reveal.ts finalizes the state on init. */
+      (function () {
+        try {
+          var nav = performance.getEntriesByType('navigation')[0];
+          var enter = new URLSearchParams(location.search).get('enter');
+          var q = enter === 'main' || enter === 'reveal';
+          if (q && !(nav && nav.type === 'reload')) {
+            var el = document.currentScript.parentElement;
+            el.classList.add('is-open');
+            el.setAttribute('data-early-open', '');
+            if (enter === 'reveal' && document.documentElement.dataset.viewport === 'web') {
+              /* From the guestbook: start with the black right panel closed over the list. */
+              var cover = document.createElement('div');
+              cover.className = 'guestbook-transition-partition guestbook-reveal-cover';
+              cover.setAttribute('aria-hidden', 'true');
+              cover.style.cssText =
+                'position:fixed;top:0;height:100vh;right:0;z-index:20000;background:#000;pointer-events:none;' +
+                'left:calc(630px * var(--desktop-main-scale, 1));';
+              document.body.appendChild(cover);
+              document.documentElement.classList.add('reveal-pending');
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
     <div class="partition-main" data-partition-main aria-hidden="true">
       <div class="main-scaled-wrap">
         <MainView />
