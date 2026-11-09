@@ -1361,8 +1361,8 @@ body.page-font-mangul .detail-desktop__back {
 [data-viewport='web'] .detail-desktop__specimen {
   display: block;
   box-sizing: border-box;
-  width: var(--dd-specimen-w);
-  max-width: calc(100% - var(--dd-specimen-inset-x) * 2);
+  width: calc(100% - var(--dd-specimen-inset-x) * 2);
+  max-width: none;
   min-height: calc(var(--dl-h) * 1px - var(--dd-specimen-top));
   margin: 0;
   margin-left: var(--dd-specimen-inset-x);
