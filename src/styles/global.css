@@ -1732,6 +1732,7 @@ body.page-detail.specimen-editing .guestbook-sticky {
 
 .detail-back {
   position: absolute;
+  cursor: pointer;
   z-index: 2;
   top: var(--detail-back-top);
   right: 0;
@@ -1885,4 +1886,11 @@ html:not([data-viewport='web']) .guestbook-panel__sheet::-webkit-scrollbar-thumb
 html:not([data-viewport='web']) .guestbook-panel__input::-webkit-scrollbar-thumb {
   background-color: #fff;
   border-radius: 0;
+}
+
+/* Specimen sample text turns into a dimmed placeholder once the field is focused/emptied. */
+.detail-desktop__specimen::placeholder,
+.detail-page--mobile [data-specimen-input]::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+  opacity: 1;
 }

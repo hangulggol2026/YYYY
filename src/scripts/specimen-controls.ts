@@ -112,6 +112,20 @@ function applySpecimenDefault(textarea: HTMLTextAreaElement) {
   textarea.value = canonical;
 }
 
+/** Untouched sample text behaves like a placeholder: focusing clears it (the sample stays
+ *  visible as a dimmed placeholder); leaving the field empty restores the sample text. */
+function bindSpecimenPlaceholder(textarea: HTMLTextAreaElement) {
+  const canonical = textarea.dataset.specimenDefault;
+  if (!canonical) return;
+  textarea.placeholder = canonical;
+  textarea.addEventListener('focus', () => {
+    if (textarea.value === canonical) textarea.value = '';
+  });
+  textarea.addEventListener('blur', () => {
+    if (textarea.value === '') textarea.value = canonical;
+  });
+}
+
 function specimenRoot(): ParentNode | null {
   const isWeb = document.documentElement.dataset.viewport === 'web';
   if (isWeb) return document.querySelector('[data-detail-desktop]');
@@ -191,6 +205,7 @@ function init() {
     if (input) bindSliderPointerDrag(input, update);
   });
   bindSpecimenMobileEditing(textarea);
+  bindSpecimenPlaceholder(textarea);
 
   weightButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -214,3 +229,24 @@ function init() {
 }
 
 init();
+
+// Back arrow carries data-href (no href) so the browser shows no link preview on hover.
+function bindBackLinks() {
+  document.querySelectorAll<HTMLElement>('.detail-back[data-href]').forEach((el) => {
+    const go = () => {
+      const url = el.dataset.href;
+      if (url) window.location.assign(url);
+    };
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      go();
+    });
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      go();
+    });
+  });
+}
+
+bindBackLinks();

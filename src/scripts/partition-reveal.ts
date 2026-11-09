@@ -445,26 +445,51 @@ function consumeEnterMainQuery(): boolean {
   return hasEnterMainQuery();
 }
 
+/**
+ * The browser shows the hovered link's URL in a status bubble (bottom-left). To avoid it, the
+ * list anchors lose their href at init (kept in data-href) and navigate via script instead.
+ */
 function bindMainListNavigation(root: HTMLElement) {
-  root.addEventListener(
-    'click',
-    (e) => {
-      const anchor = (e.target as Element).closest<HTMLAnchorElement>('a.font-list-item__link');
-      if (!anchor || anchor.target === '_blank') return;
-      if (!root.classList.contains('is-open')) return;
+  const anchors = root.querySelectorAll<HTMLAnchorElement>('a.font-list-item__link[href]');
+  anchors.forEach((a) => {
+    a.dataset.href = a.href;
+    a.removeAttribute('href');
+    a.setAttribute('role', 'link');
+    a.tabIndex = 0;
+  });
 
-      if (hasEnterMainQuery()) return;
-
-      e.preventDefault();
+  const go = (anchor: HTMLAnchorElement) => {
+    const url = anchor.dataset.href;
+    if (!url) return;
+    if (root.classList.contains('is-open') && !hasEnterMainQuery()) {
       if (isSitePath('main')) {
         window.history.replaceState({}, '', sitePathMainList());
       } else {
         window.history.pushState({}, '', sitePathMainList());
       }
-      window.location.assign(anchor.href);
+    }
+    window.location.assign(url);
+  };
+
+  root.addEventListener(
+    'click',
+    (e) => {
+      const anchor = (e.target as Element).closest<HTMLAnchorElement>('a.font-list-item__link');
+      if (!anchor || !anchor.dataset.href) return;
+      if (!root.classList.contains('is-open')) return;
+      e.preventDefault();
+      go(anchor);
     },
     true,
   );
+
+  root.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const anchor = (e.target as Element).closest<HTMLAnchorElement>('a.font-list-item__link');
+    if (!anchor || !anchor.dataset.href || !root.classList.contains('is-open')) return;
+    e.preventDefault();
+    go(anchor);
+  });
 }
 
 function init() {

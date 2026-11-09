@@ -40,7 +40,7 @@ const base = import.meta.env.BASE_URL;
   <div class="detail-page detail-page--mobile">
     <LayoutGrid bleed dark class="detail-hero">
       <div class="span-8 detail-hero__top">
-        <a href={`${base}?enter=main`} class="detail-back" aria-label="목록으로">
+        <a data-href={`${base}?enter=main`} role="link" tabindex="0" class="detail-back" aria-label="목록으로">
           <span class="detail-back__chevron" aria-hidden="true"></span>
         </a>
         <div class="detail-hero__headline">

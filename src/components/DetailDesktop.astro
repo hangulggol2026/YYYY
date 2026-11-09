@@ -41,6 +41,15 @@ const { base, font, specimenDefault, leadingMin, leadingMax, defaultLeading } = 
 
           <div class="detail-desktop__meta">
             <div class="detail-desktop__headline">
+              <a
+                data-href={`${base}?enter=main`}
+                role="link"
+                tabindex="0"
+                class="detail-back detail-desktop__back"
+                aria-label="목록으로"
+              >
+                <span class="detail-back__chevron" aria-hidden="true"></span>
+              </a>
               <h1 class="detail-desktop__title">{font.name}</h1>
               <span class="detail-desktop__byline">
                 <span class="detail-desktop__designer">{font.designer}</span>{' '}
@@ -77,13 +86,6 @@ const { base, font, specimenDefault, leadingMin, leadingMax, defaultLeading } = 
           data-specimen-scope
           style={`--specimen-leading-base: ${defaultLeading / 100}`}
         >
-          <a
-            href={`${base}?enter=main`}
-            class="detail-back detail-desktop__back detail-desktop__back--specimen"
-            aria-label="목록으로"
-          >
-            <span class="detail-back__chevron" aria-hidden="true"></span>
-          </a>
           <textarea
             class="detail-desktop__specimen specimen-text"
             data-specimen-input

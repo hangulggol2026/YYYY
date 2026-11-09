@@ -1325,12 +1325,30 @@ html.reveal-pending[data-viewport='web'] .main-desktop__left > * {
   inset: -40px -48px -40px -48px;
 }
 
-[data-viewport='web'] .detail-desktop__back--specimen {
-  top: var(--dd-header-logo-top);
-  right: calc(100% - var(--dd-guestbook-send-x) - var(--dd-guestbook-send-w));
+/* White chevron sits in the headline flow above the title; the headline's row-gap
+   (same as title ↔ designer) gives the identical spacing on every detail page. */
+[data-viewport='web'] .detail-desktop__back {
+  position: relative;
+  top: auto;
+  right: auto;
   left: auto;
-  color: #000;
+  align-self: flex-start;
+  /* the rotated chevron's visual box is ~4px shorter than the row-gap reference */
+  --back-space-mult: 1;
+  margin-bottom: calc(4px + var(--dd-partition-gap) * 0.5 * (var(--back-space-mult) - 1));
+  /* align the chevron tip with the title/byline left edge */
+  margin-left: 1.25px;
+  color: #fff;
   z-index: 3;
+}
+
+/* Per-font vertical spacing around the back chevron (1 = default). */
+body.page-font-byeokjomok .detail-desktop__back {
+  --back-space-mult: 2;
+}
+
+body.page-font-mangul .detail-desktop__back {
+  --back-space-mult: 0.5;
 }
 
 [data-viewport='web'] .detail-desktop__right[data-specimen-scope] {
