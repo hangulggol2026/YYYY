@@ -751,16 +751,26 @@ function bindDetailDesktopGuestbookSend() {
   const textarea = root?.querySelector<HTMLTextAreaElement>('[data-specimen-input]');
   if (!btn || !textarea) return;
 
+  /** 비어 있거나 예시 문구 그대로면 전송할 수 없다. */
+  const sendableText = () => {
+    const text = textarea.value.trim();
+    const sample = textarea.dataset.specimenDefault?.trim();
+    if (!text || (sample && text === sample)) return '';
+    return text;
+  };
+
   const syncDisabled = () => {
-    btn.disabled = !textarea.value.trim();
+    btn.disabled = !sendableText();
   };
 
   syncDisabled();
   textarea.addEventListener('input', syncDisabled);
+  textarea.addEventListener('focus', syncDisabled);
+  textarea.addEventListener('blur', () => setTimeout(syncDisabled, 0));
 
   btn.addEventListener('click', () => {
     const fontId = textarea.dataset.fontId?.trim() || defaultFontId();
-    const text = textarea.value.trim();
+    const text = sendableText();
     if (!text) return;
 
     btn.disabled = true;
