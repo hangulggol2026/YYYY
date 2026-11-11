@@ -668,6 +668,9 @@ html[data-landing-fit='width-scroll'] .landing-canvas {
 .landing-credits__logo-hangul {
   height: var(--landing-logo-hangul-h);
   width: auto;
+  /* flex-end 정렬에서 margin-top이 AGTI에 안 먹으므로 한글꼴을 직접 내려 사각 밑선 맞춤 */
+  position: relative;
+  top: var(--landing-logo-agti-baseline-align);
 }
 
 .landing-credits__logo-agti {

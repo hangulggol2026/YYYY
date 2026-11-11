@@ -25,7 +25,7 @@ SOURCE_MAP: dict[str, str] = {
     "Hapum-Regular.otf": "yawp",
     "허당_박혜원-Regular.otf": "heodang",
     "Eoseureum-Regular_edited.otf": "eoseureum",
-    "doldol-Regular.otf": "doldol",
+    "doldol-Regular_edited.otf": "doldol",
     "dragonfly-Regular.otf": "jamjari",
     "ulmeok-Regular.otf": "ulmeok",
     "GuGu-Regular.otf": "bidul",
